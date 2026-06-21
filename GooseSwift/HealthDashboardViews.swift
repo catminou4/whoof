@@ -457,15 +457,36 @@ struct HealthMetricCard: View {
           .font(.caption)
           .foregroundStyle(.secondary)
           .lineLimit(2)
-        Text(snapshot.provenance)
+        Text(detailLine)
           .font(.caption2)
           .foregroundStyle(.tertiary)
-          .lineLimit(1)
+          .lineLimit(2)
       }
     }
     .frame(maxWidth: .infinity, minHeight: 144, alignment: .topLeading)
     .padding(14)
     .healthCardSurface()
+  }
+
+  /// For unavailable cards, show a clear next action instead of the internal
+  /// provenance id, so "why is this blank" is answerable at a glance.
+  private var detailLine: String {
+    guard snapshot.source.kind == .unavailable else {
+      return snapshot.provenance
+    }
+    let detail = snapshot.source.detail.lowercased()
+    if detail.contains("spo2") || detail.contains("oxygen") {
+      return "Not available offline (WHOOP server-side)"
+    }
+    if detail.contains("rr") || detail.contains("hrv") || detail.contains("sample")
+      || detail.contains("resting") || detail.contains("heart-rate") || detail.contains("age") {
+      return "Wear band ~2 min to populate"
+    }
+    if detail.contains("sensor") || detail.contains("sleep") || detail.contains("history")
+      || detail.contains("synced") || detail.contains("packet") {
+      return "Sync band: More → Device → Sync"
+    }
+    return snapshot.source.detail
   }
 }
 

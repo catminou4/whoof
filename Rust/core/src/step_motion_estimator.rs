@@ -143,6 +143,7 @@ struct MotionPlan {
     packet_k: Option<u8>,
     axes: Vec<I16SeriesSummary>,
     summary_warnings: Vec<String>,
+    big_endian: bool,
 }
 
 pub fn run_raw_motion_step_estimate_for_store(
@@ -186,8 +187,10 @@ pub fn run_raw_motion_step_estimate(
     options: RawMotionStepEstimateOptions,
 ) -> GooseResult<RawMotionStepEstimateReport> {
     validate_options(&options)?;
-    let trusted_frames =
-        trusted_frames_for_summary_kinds(correlation, &["raw_motion_k10", "raw_motion_k21"]);
+    let trusted_frames = trusted_frames_for_summary_kinds(
+        correlation,
+        &["raw_motion_k10", "raw_motion_k21", "gen4_motion"],
+    );
     let mut issues = Vec::new();
     if options.require_trusted_evidence && !correlation.pass {
         issues.push("capture_correlation_report_not_passed".to_string());
@@ -513,7 +516,12 @@ fn estimate_frame_steps(
         let mut axis_count = 0usize;
         for axis in &axes {
             let offset = axis.offset + index * 2;
-            let Some(value) = read_i16_le(payload, offset) else {
+            let read = if plan.big_endian {
+                read_i16_be(payload, offset)
+            } else {
+                read_i16_le(payload, offset)
+            };
+            let Some(value) = read else {
                 quality_flags.insert(format!("{}_sample_missing", axis.name));
                 continue;
             };
@@ -612,12 +620,21 @@ fn motion_plan_from_row(row: &DecodedFrameRow) -> GooseResult<Option<MotionPlan>
             packet_k,
             axes,
             summary_warnings: warnings,
+            big_endian: false,
         }),
         DataPacketBodySummary::RawMotionK21 { axes, warnings, .. } => Some(MotionPlan {
             body_summary_kind: "raw_motion_k21",
             packet_k,
             axes,
             summary_warnings: warnings,
+            big_endian: false,
+        }),
+        DataPacketBodySummary::Gen4Motion { axes, warnings, .. } => Some(MotionPlan {
+            body_summary_kind: "gen4_motion",
+            packet_k,
+            axes,
+            summary_warnings: warnings,
+            big_endian: true,
         }),
         _ => None,
     })
@@ -740,6 +757,13 @@ fn parse_warnings(row: &DecodedFrameRow) -> GooseResult<Vec<String>> {
 
 fn read_i16_le(bytes: &[u8], offset: usize) -> Option<i16> {
     Some(i16::from_le_bytes([
+        *bytes.get(offset)?,
+        *bytes.get(offset + 1)?,
+    ]))
+}
+
+fn read_i16_be(bytes: &[u8], offset: usize) -> Option<i16> {
+    Some(i16::from_be_bytes([
         *bytes.get(offset)?,
         *bytes.get(offset + 1)?,
     ]))

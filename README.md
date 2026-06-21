@@ -47,19 +47,64 @@ The current health metric UI draws heavily from [Bevel](https://www.bevel.health
 
 - SwiftUI app shell with Home, Health, Coach, and More tabs.
 - Onboarding and persisted profile state.
-- CoreBluetooth scan/connect flows for WHOOP 5.0 devices.
-- JSON-over-C bridge into the Goose Rust core.
-- Health metric surfaces for Sleep, Recovery, Strain, Stress, Cardio Load, Energy Bank, Health Monitor, Packet Inputs, Algorithms, References, and Calibration.
-- HealthKit sleep import and workout write support.
+- CoreBluetooth scan/connect/history-sync flows for WHOOP 4.0 and 5.0 bands.
+- JSON-over-C bridge into the Whoof Rust core (`whoof-core`).
+- Consumer health surfaces: Sleep, Recovery, Strain, Stress, Cardio Load, Energy
+  Bank, and a grouped Health Monitor (Core Vitals / Heart Rate / Advanced HRV /
+  Fitness).
+- On-device metrics derived from RR intervals + IMU (no servers): HRV (RMSSD /
+  SDNN / pNN50 / Poincaré SD1·SD2 / LF·HF), RSA respiratory rate, resting / mean /
+  max heart rate, recovery, strain, stress, steps, a VO2 max estimate, and a
+  relative skin-temperature trend. See [Metrics on WHOOP 4.0](#metrics-on-whoop-40).
+- Apple Health two-way sync: broadcasts heart rate, HRV, resting HR, respiratory
+  rate (and more) to Apple Health, and keeps body weight in sync.
 - Coach surfaces that summarize local metrics and explain missing data.
-- More/Debug operational surfaces for device state, capture, sync, algorithms, storage, privacy, and support.
+- Developer-only surfaces (Connection Lab, Capture, Local Store, Raw Export,
+  Algorithms, Debug) gated under More → Developer, kept out of the consumer flow.
 - Workout Live Activity extension.
+
+## Metrics on WHOOP 4.0
+
+Everything is computed on-device from what the band exposes over Bluetooth (RR
+intervals, IMU, and raw DSP fields). Nothing is fabricated: a metric stays
+"Unavailable" with a next-step hint until it has real data.
+
+| Metric | Status | Source |
+| --- | --- | --- |
+| Heart rate (live / resting / mean / max) | Works | Live BLE stream + sample store |
+| HRV (RMSSD, SDNN, pNN50, SD1/SD2) | Works | RR intervals (live or synced) |
+| Autonomic balance (LF/HF) | Works | Frequency-domain HRV over a ~1 min RR window |
+| Respiratory rate | Works | RR-interval RSA |
+| Recovery / Strain / Stress | Works | HRV + resting HR + sleep + HR zones |
+| VO2 max | Estimate | Population heuristic (resting HR + age), labeled |
+| Steps / cadence | Works (synced) | Gen4 IMU motion history |
+| Sleep + stages | Works (synced) | Overnight motion + HR/HRV, labeled estimate |
+| Skin-temperature trend | Works (synced) | Relative raw-ADC deviation, uncalibrated |
+| SpO2 % | Not available | Gen4 emits DC-only PPG; no client-side derivation |
+| Absolute skin temperature °C | Not available | No public thermistor calibration |
+
+Live metrics populate within ~1–2 minutes of wearing a connected band. History
+metrics (steps, sleep, skin-temp trend) require a sync (below).
+
+## Getting Data Into The App
+
+Two independent paths feed the metrics:
+
+1. **Live stream** — connect the band (More → Device → Scan & Connect). Heart
+   rate, HRV, respiratory rate, and the HR stats populate while worn.
+2. **History sync** — More → Device → **Sync**. The band streams its stored
+   history; Whoof mirrors the raw frames, then promotes them into the
+   `decoded_frames` store that every metric reads. After a completed sync, the
+   history metrics (steps, sleep, skin-temp trend, full recovery) populate.
+
+If a card reads "Unavailable," its hint says which path it needs ("Wear band
+~2 min" vs "Sync band").
 
 ## Requirements
 
 - macOS with Xcode installed.
 - iOS 26 SDK and an iOS 26 capable simulator/device.
-- Apple Developer signing configured for the `com.goose.swift` bundle identifier.
+- Apple Developer signing configured for the `com.madhursatija.whoof` bundle identifier.
 - Rust and Cargo for building the Goose Rust core from the committed `Rust/core` source.
 - iOS Rust targets installed with `rustup`; see the Rust Core Bridge section below.
 
@@ -107,7 +152,7 @@ After a successful physical-device build, reinstall and launch:
 ```sh
 xcrun devicectl device uninstall app \
   --device <device-id> \
-  com.goose.swift
+  com.madhursatija.whoof
 
 xcrun devicectl device install app \
   --device <device-id> \
@@ -116,7 +161,7 @@ xcrun devicectl device install app \
 xcrun devicectl device process launch \
   --device <device-id> \
   --terminate-existing \
-  com.goose.swift
+  com.madhursatija.whoof
 ```
 
 ## Rust Core Bridge

@@ -2171,8 +2171,47 @@ pub fn run_sleep_feature_score_report_for_store(
         issues.push("disturbance_motion_threshold_invalid".to_string());
     }
 
+    // Narrow to the detected main sleep window so staging runs over the actual
+    // sleep period, not the whole captured span. Falls back to all features when
+    // no clear >=3h low-motion run is found, preserving prior behavior.
+    let (sleep_motion_features, sleep_heart_rate_features) =
+        match detect_main_sleep_window(&motion_features, &options) {
+            Some((window_start_ms, window_end_ms)) => {
+                let narrowed_motion = motion_features
+                    .iter()
+                    .copied()
+                    .filter(|feature| {
+                        feature_time_unix_ms(feature)
+                            .map(|ms| ms >= window_start_ms && ms <= window_end_ms)
+                            .unwrap_or(false)
+                    })
+                    .collect::<Vec<_>>();
+                let narrowed_heart_rate = heart_rate_features
+                    .iter()
+                    .copied()
+                    .filter(|feature| {
+                        heart_rate_feature_time_unix_ms(feature)
+                            .map(|ms| ms >= window_start_ms && ms <= window_end_ms)
+                            .unwrap_or(false)
+                    })
+                    .collect::<Vec<_>>();
+                if narrowed_motion.len() >= 2 {
+                    (narrowed_motion, narrowed_heart_rate)
+                } else {
+                    (motion_features.clone(), heart_rate_features.clone())
+                }
+            }
+            None => (motion_features.clone(), heart_rate_features.clone()),
+        };
+
     let sleep_window = if issues.is_empty() {
-        sleep_window_feature(start, end, &motion_features, &heart_rate_features, options)
+        sleep_window_feature(
+            start,
+            end,
+            &sleep_motion_features,
+            &sleep_heart_rate_features,
+            options,
+        )
     } else {
         None
     };
@@ -4979,6 +5018,67 @@ fn average_motion_intensity_0_to_1(motion_features: &[&MotionFeature]) -> Option
             .sum::<f64>()
             / motion_features.len() as f64,
     )
+}
+
+/// Detect the main sleep window as the longest contiguous run of low-motion
+/// minutes (gap-tolerant), so staging runs over the actual sleep period rather
+/// than the whole captured span. Motion-only v0 (flagged preliminary upstream);
+/// returns (start_unix_ms, end_unix_ms) or None when no >=3h low-motion run.
+fn detect_main_sleep_window(
+    motion_features: &[&MotionFeature],
+    options: &SleepFeatureScoreOptions,
+) -> Option<(i64, i64)> {
+    let mut minutes: Vec<(i64, f64)> = motion_features
+        .iter()
+        .filter_map(|feature| {
+            feature_time_unix_ms(feature).map(|ms| (ms / 60_000, feature.motion_intensity_0_to_1))
+        })
+        .collect();
+    if minutes.len() < 2 {
+        return None;
+    }
+    minutes.sort_by_key(|entry| entry.0);
+    minutes.dedup_by_key(|entry| entry.0);
+
+    let low = options.low_motion_threshold_0_to_1;
+    let gap_tolerance_minutes = 5_i64;
+    let min_sleep_minutes = 180_i64;
+
+    let mut best: Option<(i64, i64)> = None;
+    let mut run_start: Option<i64> = None;
+    let mut prev_minute: Option<i64> = None;
+    let mut consider = |start: Option<i64>, end: i64, best: &mut Option<(i64, i64)>| {
+        if let Some(start) = start {
+            let longer = best.map(|(bs, be)| (be - bs) < (end - start)).unwrap_or(true);
+            if longer {
+                *best = Some((start, end));
+            }
+        }
+    };
+
+    for &(minute, motion) in &minutes {
+        let contiguous = prev_minute
+            .map(|prev| minute - prev <= gap_tolerance_minutes)
+            .unwrap_or(true);
+        if motion <= low && contiguous {
+            if run_start.is_none() {
+                run_start = Some(minute);
+            }
+        } else {
+            consider(run_start.take(), prev_minute.unwrap_or(minute), &mut best);
+            if motion <= low {
+                run_start = Some(minute);
+            }
+        }
+        prev_minute = Some(minute);
+    }
+    consider(run_start.take(), prev_minute.unwrap_or(0), &mut best);
+
+    let (start_minute, end_minute) = best?;
+    if end_minute - start_minute < min_sleep_minutes {
+        return None;
+    }
+    Some((start_minute * 60_000, end_minute * 60_000))
 }
 
 fn sleep_window_feature(

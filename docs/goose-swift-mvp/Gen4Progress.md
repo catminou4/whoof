@@ -119,8 +119,13 @@ parsers. 24 protocol tests + Gen4 HR/HRV/IMU feature tests green.
   round-trip + replace unit-tested (`daily_named_metrics_round_trip_and_replace`).
   Note: pre-existing `bridge_tests` failures (ui_coverage audit, step-estimate
   inputs_json) are unrelated — they fail identically on HEAD.
-- [ ] Wire the persisted series into the Energy Bank / Stress trend ROW rendering
-  (read helper exists; UI hookup + on-device check remain).
+- [x] **Trend rendering wired (iteration 6).** `trendMergingPersistedSeries` swaps
+  the Energy Bank / Stress fallback trend's points for the persisted multi-day
+  series (`persistedTrendPoints`, last 14 days) once ≥2 days are stored; keeps the
+  fallback (and its labels/analysis) otherwise — zero regression before data
+  accumulates. Wired into `stressSnapshot` + `energyBankSnapshot`. Full write →
+  store → read → render loop now closed. (On-device visual confirmation still
+  pending — needs the app running over multiple days.)
 - [ ] Stress activity masking (split activity vs non-activity stress).
 - [ ] Sleep stages from band data vs heuristic.
 

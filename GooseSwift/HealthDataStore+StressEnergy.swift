@@ -255,7 +255,9 @@ extension HealthDataStore {
       freshness: summary.freshness,
       provenance: summary.source.detail,
       source: summary.source,
-      trend: Self.stressTrendModel(base: snapshot.trend, summary: summary)
+      trend: trendMergingPersistedSeries(
+        Self.stressTrendModel(base: snapshot.trend, summary: summary),
+        metricName: "stress_score")
     )
   }
 
@@ -283,7 +285,9 @@ extension HealthDataStore {
       freshness: summary.freshness,
       provenance: summary.source.detail,
       source: summary.source,
-      trend: Self.energyBankTrendModel(base: snapshot.trend, summary: summary)
+      trend: trendMergingPersistedSeries(
+        Self.energyBankTrendModel(base: snapshot.trend, summary: summary),
+        metricName: "energy_bank_percent")
     )
   }
 
@@ -439,6 +443,52 @@ extension HealthDataStore {
       guard let value else { return nil }
       return (dateKey, value)
     }
+  }
+
+  /// Trend points from the persisted named-daily series for the last `days`.
+  /// Returns nil when nothing is stored yet so callers keep their fallback trend.
+  func persistedTrendPoints(
+    metricName: String, days: Int = 14, calendar: Calendar = .current
+  ) -> [HealthTrendPoint]? {
+    let today = Date()
+    guard let startDate = calendar.date(byAdding: .day, value: -(days - 1), to: today) else {
+      return nil
+    }
+    let start = HealthDataStore.metricDateKey(for: startDate, calendar: calendar)
+    let end = HealthDataStore.metricDateKey(for: today, calendar: calendar)
+    let series = dailyNamedMetricSeries(name: metricName, from: start, to: end)
+    guard !series.isEmpty else { return nil }
+    return series.map { entry in
+      HealthTrendPoint(label: Self.shortDayLabel(entry.dateKey), value: entry.value)
+    }
+  }
+
+  /// Replace a fallback trend's points with the persisted multi-day series once at
+  /// least two days exist; otherwise keep the fallback (preserves prior behavior
+  /// and its labels/analysis).
+  func trendMergingPersistedSeries(
+    _ base: HealthTrendModel, metricName: String
+  ) -> HealthTrendModel {
+    guard let points = persistedTrendPoints(metricName: metricName), points.count >= 2 else {
+      return base
+    }
+    return HealthTrendModel(
+      id: base.id,
+      title: base.title,
+      rangeLabel: base.rangeLabel,
+      summary: base.summary,
+      analysis: base.analysis,
+      resources: base.resources,
+      points: points
+    )
+  }
+
+  private static func shortDayLabel(_ dateKey: String) -> String {
+    let parts = dateKey.split(separator: "-")
+    guard parts.count == 3, let month = Int(parts[1]), let day = Int(parts[2]) else {
+      return dateKey
+    }
+    return "\(month)/\(day)"
   }
 
 }

@@ -1002,6 +1002,19 @@ fn recovery_sensor_metric_value(
             }
         }
         "respiratory_rate_rpm" => {
+            // WHOOP 4.0 respiratory rate comes from RR-interval RSA, not the raw
+            // sensor ADC. Use it when there is enough RR data (real-data-only).
+            if let Some(rpm) =
+                crate::metric_features::rsa_respiratory_rpm_from_hrv(&discovery.hrv_report)
+            {
+                return RecoverySensorMetricValue {
+                    local_value: Some(round_1(rpm)),
+                    unit: "rpm".to_string(),
+                    value_source: Some("metrics.respiratory_rsa".to_string()),
+                    input_ids: vec!["metrics.respiratory_rsa".to_string()],
+                    blocker_reasons: Vec::new(),
+                };
+            }
             let features = discovery
                 .vital_event_report
                 .respiratory_rate_inputs

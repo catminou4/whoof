@@ -3353,7 +3353,7 @@ fn recovery_sensor_widgets(
 ) -> Vec<RecoverySensorWidgetDiscovery> {
     vec![
         hrv_widget_discovery(hrv_report),
-        respiratory_rate_widget_discovery(vital_event_report),
+        respiratory_rate_widget_discovery(vital_event_report, hrv_report),
         oxygen_saturation_widget_discovery(vital_event_report),
         temperature_widget_discovery(vital_event_report),
     ]
@@ -3421,9 +3421,43 @@ fn hrv_widget_discovery(hrv_report: &HrvFeatureReport) -> RecoverySensorWidgetDi
     )
 }
 
+/// Respiratory rate (breaths/min) derived from the day's pooled RR intervals via
+/// respiratory sinus arrhythmia. Returns None unless there is enough RR coverage,
+/// so it never fabricates a value — the WHOOP 4.0 respiratory source.
+pub fn rsa_respiratory_rpm_from_hrv(hrv_report: &HrvFeatureReport) -> Option<f64> {
+    let rr_intervals_ms: Vec<f64> = hrv_report
+        .hrv_input
+        .as_ref()
+        .map(|input| input.rr_intervals_ms.clone())
+        .unwrap_or_default();
+    crate::respiratory_rsa::goose_respiratory_rate_v0(&rr_intervals_ms).respiratory_rate_rpm
+}
+
 fn respiratory_rate_widget_discovery(
     vital_event_report: &VitalEventFeatureReport,
+    hrv_report: &HrvFeatureReport,
 ) -> RecoverySensorWidgetDiscovery {
+    // Prefer the RSA-derived respiratory rate (the only Gen4 source). Only
+    // promotable when there is real RR data; otherwise fall through to the
+    // (gated) raw-sensor candidate path and stay Unavailable.
+    if let Some(rpm) = rsa_respiratory_rpm_from_hrv(hrv_report) {
+        return recovery_sensor_widget(
+            "respiratory_rate_rpm",
+            1,
+            1,
+            1,
+            1,
+            vec!["rsa_rr_tachogram".to_string()],
+            vec!["respiratory_rate_rsa_derived".to_string()],
+            Vec::new(),
+            json!({
+                "input_source": "metrics.respiratory_rsa",
+                "method": "rr_interval_respiratory_sinus_arrhythmia",
+                "respiratory_rate_rpm": rpm,
+            }),
+        );
+    }
+
     let quality_flags = sorted_feature_flags(
         vital_event_report
             .respiratory_rate_inputs

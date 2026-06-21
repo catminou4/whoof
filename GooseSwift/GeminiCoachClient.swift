@@ -3,9 +3,14 @@ import Foundation
 struct GeminiCoachFunctionCall: Equatable {
   let name: String
   let arguments: [String: Any]
+  /// Opaque reasoning token returned alongside a thinking-model function call.
+  /// It must be echoed back in the model turn or the follow-up request is
+  /// rejected with "Function call is missing a thought_signature".
+  let thoughtSignature: String?
 
   static func == (lhs: GeminiCoachFunctionCall, rhs: GeminiCoachFunctionCall) -> Bool {
     lhs.name == rhs.name
+      && lhs.thoughtSignature == rhs.thoughtSignature
       && NSDictionary(dictionary: lhs.arguments).isEqual(to: rhs.arguments)
   }
 }
@@ -127,7 +132,10 @@ struct GeminiCoachClient {
         } else if let call = part["functionCall"] as? [String: Any],
                   let name = call["name"] as? String {
           let arguments = call["args"] as? [String: Any] ?? [:]
-          items.append(.functionCall(GeminiCoachFunctionCall(name: name, arguments: arguments)))
+          let thoughtSignature = part["thoughtSignature"] as? String
+          items.append(.functionCall(GeminiCoachFunctionCall(
+            name: name, arguments: arguments, thoughtSignature: thoughtSignature
+          )))
         }
       }
     }

@@ -185,8 +185,15 @@ final class CoachChatModel: ObservableObject {
       return
     }
 
-    // Echo the model's function-call turn, then the tool results turn.
-    let modelParts = calls.map { ["functionCall": ["name": $0.name, "args": $0.arguments]] }
+    // Echo the model's function-call turn (including each thoughtSignature,
+    // which Gemini thinking models require back), then the tool results turn.
+    let modelParts = calls.map { call -> [String: Any] in
+      var part: [String: Any] = ["functionCall": ["name": call.name, "args": call.arguments]]
+      if let signature = call.thoughtSignature {
+        part["thoughtSignature"] = signature
+      }
+      return part
+    }
     contents.append(["role": "model", "parts": modelParts])
 
     var responseParts: [[String: Any]] = []

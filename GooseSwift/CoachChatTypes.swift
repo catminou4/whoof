@@ -66,21 +66,23 @@ enum CoachModelPreset: String, CaseIterable, Identifiable {
   var title: String {
     switch self {
     case .flashLite:
-      return "Gemini 2.0 Flash Lite"
+      return "Gemini Flash Lite"
     case .flash:
-      return "Gemini 2.0 Flash"
+      return "Gemini Flash"
     case .flashThinking:
       return "Gemini 2.5 Flash"
     }
   }
 
-  /// Google Gemini model id used against the free-tier API.
+  /// Google Gemini model id used against the free-tier API. The `-latest`
+  /// aliases are what the free tier currently serves; pinned ids like
+  /// gemini-2.0-flash return a 0-quota error on free keys.
   var modelID: String {
     switch self {
     case .flashLite:
-      return "gemini-2.0-flash-lite"
+      return "gemini-flash-lite-latest"
     case .flash:
-      return "gemini-2.0-flash"
+      return "gemini-flash-latest"
     case .flashThinking:
       return "gemini-2.5-flash"
     }

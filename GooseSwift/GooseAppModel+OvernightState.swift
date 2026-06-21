@@ -156,16 +156,16 @@ extension WhoofAppModel {
         if overnightGuardExportStatus.localizedCaseInsensitiveContains("validation issues")
           || overnightGuardExportStatus.localizedCaseInsensitiveContains("failed")
           || overnightGuardExportStatus.localizedCaseInsensitiveContains("missing") {
-          return ("stale", "Final bundle saved with validation issues | inspect before opening WHOOP")
+          return ("blocked", "Final bundle saved with validation issues | inspect before opening WHOOP")
         }
         if !inactiveWarnings.isEmpty {
-          return ("stale", "Final bundle saved with proof warning | \(inactiveWarnings.joined(separator: ", ")) | inspect before opening WHOOP")
+          return ("blocked", "Final bundle saved with proof warning | \(inactiveWarnings.joined(separator: ", ")) | inspect before opening WHOOP")
         }
         return ("ready", "Final bundle ready | AirDrop before opening WHOOP")
       }
       if overnightGuardCanExportLastSession {
         if !inactiveWarnings.isEmpty {
-          return ("stale", "Guard stopped with proof warning | \(inactiveWarnings.joined(separator: ", ")) | export and inspect before opening WHOOP")
+          return ("blocked", "Guard stopped with proof warning | \(inactiveWarnings.joined(separator: ", ")) | export and inspect before opening WHOOP")
         }
         return ("pending", "Guard stopped or recovered | export before opening WHOOP")
       }
@@ -221,7 +221,7 @@ extension WhoofAppModel {
       return ("pending", "Waiting for sleep-ready evidence | \(waiting.joined(separator: ", ")) | \(evidence)")
     }
     if !warnings.isEmpty {
-      return ("stale", "Capture running with warning | \(warnings.joined(separator: ", ")) | \(evidence)")
+      return ("blocked", "Capture running with warning | \(warnings.joined(separator: ", ")) | \(evidence)")
     }
     return ("ready", "Sleep-ready | \(evidence)")
   }

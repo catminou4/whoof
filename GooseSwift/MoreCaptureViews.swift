@@ -98,7 +98,7 @@ struct MoreCaptureView: View {
           title: "Range Polls",
           value: "polls \(model.overnightGuardRangePollCount) | success \(model.overnightGuardSuccessfulRangePollCount) / responses \(model.overnightGuardRangeTelemetryCount) | \(model.ble.lastHistoricalRangeCommandStatus)",
           systemImage: "arrow.triangle.2.circlepath",
-          status: model.overnightGuardSuccessfulRangePollCount > 0 ? .ready : (model.overnightGuardRangeTelemetryCount > 0 ? .stale : .pending)
+          status: model.overnightGuardSuccessfulRangePollCount > 0 ? .ready : (model.overnightGuardRangeTelemetryCount > 0 ? .blocked : .pending)
         )
         MoreInfoRow(
           title: "Command Writes",
@@ -134,13 +134,13 @@ struct MoreCaptureView: View {
           title: "Power",
           value: model.overnightGuardPowerSummary,
           systemImage: "battery.100percent",
-          status: model.overnightGuardPowerSummary.localizedCaseInsensitiveContains("Low Power ON") ? .stale : .ready
+          status: model.overnightGuardPowerSummary.localizedCaseInsensitiveContains("Low Power ON") ? .blocked : .ready
         )
         MoreInfoRow(
           title: "Watchdog",
           value: model.overnightGuardWatchdogSummary,
           systemImage: "checkmark.shield",
-          status: model.overnightGuardWatchdogSummary.localizedCaseInsensitiveContains("warning") || model.overnightGuardWatchdogSummary.localizedCaseInsensitiveContains("No raw") ? .stale : .ready
+          status: model.overnightGuardWatchdogSummary.localizedCaseInsensitiveContains("warning") || model.overnightGuardWatchdogSummary.localizedCaseInsensitiveContains("No raw") ? .blocked : .ready
         )
         MoreInfoRow(
           title: "Event Log",
@@ -158,7 +158,7 @@ struct MoreCaptureView: View {
           title: "WHOOP App",
           value: model.overnightGuardWarning,
           systemImage: "exclamationmark.triangle",
-          status: .stale
+          status: .blocked
         )
         HStack {
           Button {
@@ -266,7 +266,7 @@ struct MoreCaptureView: View {
       return .blocked
     }
     if model.overnightGuardStatus.hasPrefix("Stopped") {
-      return .stale
+      return .blocked
     }
     return .pending
   }
@@ -280,7 +280,7 @@ struct MoreCaptureView: View {
     case "unavailable":
       return .unavailable
     case "stale":
-      return .stale
+      return .blocked
     default:
       return .pending
     }
@@ -289,7 +289,7 @@ struct MoreCaptureView: View {
   private var overnightGuardSQLiteMirrorStatus: MoreStatusKind {
     let summary = model.overnightGuardSQLiteMirrorSummary
     if summary.localizedCaseInsensitiveContains("warning") {
-      return .stale
+      return .blocked
     }
     if summary == "SQLite mirror not started" || summary == "SQLite mirror waiting for first flush" {
       return .pending
@@ -297,7 +297,7 @@ struct MoreCaptureView: View {
     if summary.localizedCaseInsensitiveContains("dropped 0") {
       return .ready
     }
-    return summary.localizedCaseInsensitiveContains("dropped") ? .stale : .ready
+    return summary.localizedCaseInsensitiveContains("dropped") ? .blocked : .ready
   }
 
   private var overnightGuardExportStatus: MoreStatusKind {
@@ -307,7 +307,7 @@ struct MoreCaptureView: View {
     if model.overnightGuardExportStatus.localizedCaseInsensitiveContains("failed")
       || model.overnightGuardExportStatus.localizedCaseInsensitiveContains("issue")
       || model.overnightGuardExportStatus.localizedCaseInsensitiveContains("missing") {
-      return .stale
+      return .blocked
     }
     return model.overnightGuardExportURL == nil ? .pending : .ready
   }
@@ -324,7 +324,7 @@ struct MoreCaptureView: View {
   private func status(for level: WhoofLogLevel) -> MoreStatusKind {
     switch level {
     case .debug, .info: .ready
-    case .warn: .stale
+    case .warn: .blocked
     case .error: .blocked
     }
   }

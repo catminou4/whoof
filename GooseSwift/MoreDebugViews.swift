@@ -15,7 +15,7 @@ struct MoreDebugView: View {
         MoreInfoRow(title: "Frame Parse", value: store.frameParseStatus, systemImage: "curlybraces.square", status: store.frameParseStatus.hasPrefix("Parsed") ? .ready : .pending)
         MoreInfoRow(title: "CRC", value: store.frameCRCStatus, systemImage: "checkmark.seal", status: .pending)
         MoreInfoRow(title: "Payload", value: store.framePayloadStatus, systemImage: "doc.text.magnifyingglass", status: .pending)
-        MoreInfoRow(title: "Warnings", value: store.frameWarningsStatus, systemImage: "exclamationmark.triangle", status: store.frameWarningsStatus == "No warnings" ? .ready : .stale)
+        MoreInfoRow(title: "Warnings", value: store.frameWarningsStatus, systemImage: "exclamationmark.triangle", status: store.frameWarningsStatus == "No warnings" ? .ready : .blocked)
         MoreInfoRow(title: "Timeline", value: store.frameTimelineStatus, systemImage: "timeline.selection", status: .pending)
         Button {
           store.runFrameParseProbe()
@@ -188,7 +188,7 @@ struct MoreDebugView: View {
           title: "Skin Temp Candidate",
           value: packetMonitor.latestSkinTemperatureCandidateStatus,
           systemImage: "thermometer",
-          status: packetMonitor.latestSkinTemperatureCandidateStatus == "No skin temperature events" ? .pending : .stale
+          status: packetMonitor.latestSkinTemperatureCandidateStatus == "No skin temperature events" ? .pending : .blocked
         )
         MoreInfoRow(
           title: "Latest Data Packet",
@@ -200,7 +200,7 @@ struct MoreDebugView: View {
           title: "Capture",
           value: "\(model.ble.physiologyCaptureStatus) | \(model.ble.lastPhysiologyCommandSummary)",
           systemImage: "dot.radiowaves.left.and.right",
-          status: model.ble.physiologyCaptureStatus == "Not started" ? .pending : .stale
+          status: model.ble.physiologyCaptureStatus == "Not started" ? .pending : .blocked
         )
         MoreInfoRow(
           title: "High Frequency Sync",
@@ -212,25 +212,25 @@ struct MoreDebugView: View {
           title: "History Temp",
           value: packetMonitor.latestHistoryTemperatureCandidateStatus,
           systemImage: "thermometer.medium",
-          status: packetMonitor.latestHistoryTemperatureCandidateStatus == "No history temperature packets" ? .pending : .stale
+          status: packetMonitor.latestHistoryTemperatureCandidateStatus == "No history temperature packets" ? .pending : .blocked
         )
         MoreInfoRow(
           title: "History RR",
           value: packetMonitor.latestRespiratoryRateCandidateStatus,
           systemImage: "lungs",
-          status: packetMonitor.latestRespiratoryRateCandidateStatus == "No respiratory rate candidates" ? .pending : .stale
+          status: packetMonitor.latestRespiratoryRateCandidateStatus == "No respiratory rate candidates" ? .pending : .blocked
         )
         MoreInfoRow(
           title: "Pulse Info",
           value: packetMonitor.latestPulseInformationPacketStatus,
           systemImage: "lungs",
-          status: packetMonitor.latestPulseInformationPacketStatus == "No pulse information packets" ? .pending : .stale
+          status: packetMonitor.latestPulseInformationPacketStatus == "No pulse information packets" ? .pending : .blocked
         )
         MoreInfoRow(
           title: "Optical",
           value: packetMonitor.latestOpticalPacketStatus,
           systemImage: "waveform",
-          status: packetMonitor.latestOpticalPacketStatus == "No optical packets" ? .pending : .stale
+          status: packetMonitor.latestOpticalPacketStatus == "No optical packets" ? .pending : .blocked
         )
         MoreInfoRow(
           title: "Raw/Research K20",
@@ -339,7 +339,7 @@ struct MoreDebugView: View {
               title: response.title,
               value: self.debugCommandResponseDetail(response),
               systemImage: response.status == "ok" ? "checkmark.circle" : "exclamationmark.triangle",
-              status: response.status == "ok" ? .ready : .stale
+              status: response.status == "ok" ? .ready : .blocked
             )
           }
         }
@@ -480,7 +480,7 @@ struct MoreDebugView: View {
     if model.ble.connectionState != "ready" {
       return .blocked
     }
-    return model.ble.canSyncHistorical || model.ble.isHistoricalSyncing ? .pending : .stale
+    return model.ble.canSyncHistorical || model.ble.isHistoricalSyncing ? .pending : .blocked
   }
 
   private var respiratoryPacketWatchStatus: MoreStatusKind {
@@ -494,7 +494,7 @@ struct MoreDebugView: View {
       return .blocked
     }
     if model.respiratoryPacketWatchStatus.hasPrefix("Timed out") {
-      return .stale
+      return .blocked
     }
     return model.ble.connectionState == "ready" ? .pending : .blocked
   }
@@ -507,7 +507,7 @@ struct MoreDebugView: View {
         || model.ble.debugCommandStatus.contains("Unknown")
         || model.ble.debugCommandStatus.contains("failed")
         || model.ble.debugCommandStatus.contains("timeout") {
-      return .stale
+      return .blocked
     }
     return model.ble.connectionState == "ready" ? .pending : .blocked
   }
@@ -516,7 +516,7 @@ struct MoreDebugView: View {
     if model.ble.connectionState != "ready" {
       return .blocked
     }
-    return command.risk == "read" ? .pending : .stale
+    return command.risk == "read" ? .pending : .blocked
   }
 
   private func debugCommandDetail(_ command: WhoofDebugCommandDefinition) -> String {
@@ -555,7 +555,7 @@ struct MoreDebugView: View {
     case .expected:
       return .pending
     case .unresolved:
-      return .stale
+      return .blocked
     case .unknown:
       return .blocked
     }

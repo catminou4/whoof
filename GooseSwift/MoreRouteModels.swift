@@ -118,7 +118,6 @@ enum MoreStatusKind: String, CaseIterable {
   case pending
   case blocked
   case unavailable
-  case stale
 
   var title: String {
     rawValue.capitalized
@@ -130,7 +129,6 @@ enum MoreStatusKind: String, CaseIterable {
     case .pending: .blue
     case .blocked: .orange
     case .unavailable: .gray
-    case .stale: .yellow
     }
   }
 
@@ -140,7 +138,6 @@ enum MoreStatusKind: String, CaseIterable {
     case .pending: "clock.fill"
     case .blocked: "exclamationmark.triangle.fill"
     case .unavailable: "minus.circle.fill"
-    case .stale: "arrow.clockwise.circle.fill"
     }
   }
 }

@@ -264,22 +264,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "goose-core"
-version = "0.1.0"
-dependencies = [
- "crc32fast",
- "hex",
- "rusqlite",
- "serde",
- "serde_json",
- "sha2",
- "tempfile",
- "thiserror",
- "tungstenite",
- "zip",
-]
-
-[[package]]
 name = "hashbrown"
 version = "0.15.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -853,6 +837,22 @@ dependencies = [
  "hashbrown 0.15.5",
  "indexmap",
  "semver",
+]
+
+[[package]]
+name = "whoof-core"
+version = "0.1.0"
+dependencies = [
+ "crc32fast",
+ "hex",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+ "tungstenite",
+ "zip",
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 use std::{fs, path::Path};
 
-use goose_core::ui_coverage::{
+use whoof_core::ui_coverage::{
     LayoutCoverageRule, NavigationCoverageRule, SourceClassCoverageRule, UiCoverageAuditInput,
     UiCoverageExpectedInventory, UiCoverageInventoryPaths, UiCoverageRules, UiCoverageStatus,
     UiResourceCoverageRule, run_ui_coverage_audit,

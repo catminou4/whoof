@@ -1,6 +1,6 @@
 use std::fs;
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     debug_ws::{DebugWsContractInput, validate_debug_ws_contract},
     report::write_json_report,
@@ -14,7 +14,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let input_path = default_path(
         &args,

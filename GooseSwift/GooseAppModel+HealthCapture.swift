@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-extension GooseAppModel {
+extension WhoofAppModel {
   func refreshActivityTimeline(for date: Date = Date()) {
     let calendar = Calendar.current
     let dayStart = calendar.startOfDay(for: date)
@@ -18,7 +18,7 @@ extension GooseAppModel {
     activityTimelineRefreshQueue.async { [weak self] in
       let result: Result<ActivityTimelineRefreshResult, Error>
       do {
-        let report = try GooseRustBridge().request(
+        let report = try WhoofRustBridge().request(
           method: "activity.list_sessions_with_metrics",
           args: [
             "database_path": databasePath,
@@ -306,7 +306,7 @@ extension GooseAppModel {
     ble.record(level: .warn, source: "respiratory.packet_watch", title: "timeout", body: respiratoryPacketWatchStatus)
   }
 
-  func handleHistoricalSyncProgress(_ progress: GooseHistoricalSyncProgress) {
+  func handleHistoricalSyncProgress(_ progress: WhoofHistoricalSyncProgress) {
     handleOvernightHistoricalSyncProgress(progress)
     guard respiratoryPacketWatchActive else {
       return

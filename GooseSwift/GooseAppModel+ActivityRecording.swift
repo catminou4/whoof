@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-extension GooseAppModel {
+extension WhoofAppModel {
   func prepareClientHello() {
     ble.record(source: "rust", title: "hello.prepare.start")
     rustStatus = "Checking Rust bridge"
@@ -11,14 +11,14 @@ extension GooseAppModel {
     rustStartupQueue.async { [weak self] in
       let result: Result<(coreVersion: String, summary: String), Error>
       do {
-        let rust = GooseRustBridge()
+        let rust = WhoofRustBridge()
         let version = try rust.request(method: "core.version")
         let coreVersion = (version["core_version"] as? String) ?? "unknown"
         let parsed = try rust.request(
           method: "protocol.parse_frame_hex",
           args: [
             "device_type": "GOOSE",
-            "frame_hex": GooseHello.clientHelloFrameHex,
+            "frame_hex": WhoofHello.clientHelloFrameHex,
           ]
         )
         let sequence = parsed["sequence"] ?? "?"

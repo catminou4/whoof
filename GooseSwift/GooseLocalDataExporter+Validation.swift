@@ -7,16 +7,16 @@ import UIKit
 import HealthKit
 #endif
 
-extension GooseLocalDataExporter {
+extension WhoofLocalDataExporter {
   static func validate(
     exportedRelativePaths: [String],
     requiredOvernightSessionID: String?,
     documentsDirectory: URL,
     fileManager: FileManager
-  ) -> GooseLocalDataExportValidation {
+  ) -> WhoofLocalDataExportValidation {
     let pathSet = Set(exportedRelativePaths)
     let exportSelfIncluded = exportedRelativePaths.contains { path in
-      path == "Documents/GooseSwift/Exports" || path.hasPrefix("Documents/GooseSwift/Exports/")
+      path == "Documents/WhoofSwift/Exports" || path.hasPrefix("Documents/WhoofSwift/Exports/")
     }
 
     let rawNotificationsIncluded: Bool
@@ -36,7 +36,7 @@ extension GooseLocalDataExporter {
     var crashMarkerSessionMatches = false
     var crashMarkerFinalized = false
     let sqliteDatabasePath = defaultDatabasePath()
-    let sqliteDatabaseIncluded = pathSet.contains("Application Support/GooseSwift/goose.sqlite")
+    let sqliteDatabaseIncluded = pathSet.contains("Application Support/WhoofSwift/goose.sqlite")
     let bleLogURLs = includedBLELogURLs(pathSet: pathSet, documentsDirectory: documentsDirectory, fileManager: fileManager)
     let bleLogIncluded = !bleLogURLs.isEmpty
     let bleLogByteCount = currentBLELogByteCount(logURLs: bleLogURLs, fileManager: fileManager)
@@ -47,9 +47,9 @@ extension GooseLocalDataExporter {
         fileManager: fileManager
       )
     } ?? false
-    let bleLiveLogRelativePath = "Documents/GooseSwift/goose-ble-live.log"
+    let bleLiveLogRelativePath = "Documents/WhoofSwift/goose-ble-live.log"
     let bleLiveLogURL = documentsDirectory
-      .appendingPathComponent("GooseSwift", isDirectory: true)
+      .appendingPathComponent("WhoofSwift", isDirectory: true)
       .appendingPathComponent("goose-ble-live.log")
     let bleLiveLogIncluded = pathSet.contains(bleLiveLogRelativePath)
     let bleLiveLogByteCount = bleLiveLogIncluded
@@ -61,7 +61,7 @@ extension GooseLocalDataExporter {
     var sqliteDatabaseExists = false
     var sqliteDatabaseOpenable = false
     var sqliteStorageCheckPassed = false
-    var metrics = GooseOvernightExportMetrics()
+    var metrics = WhoofOvernightExportMetrics()
     var issues: [String] = []
 
     validateSQLiteDatabase(
@@ -74,9 +74,9 @@ extension GooseLocalDataExporter {
     )
 
     if let requiredOvernightSessionID {
-      let base = "Documents/GooseSwift/OvernightGuard/\(requiredOvernightSessionID)/"
+      let base = "Documents/WhoofSwift/OvernightGuard/\(requiredOvernightSessionID)/"
       let sessionDirectory = documentsDirectory
-        .appendingPathComponent("GooseSwift", isDirectory: true)
+        .appendingPathComponent("WhoofSwift", isDirectory: true)
         .appendingPathComponent("OvernightGuard", isDirectory: true)
         .appendingPathComponent(requiredOvernightSessionID, isDirectory: true)
       let rawNotificationsURL = sessionDirectory.appendingPathComponent("raw-notifications.jsonl")
@@ -249,7 +249,7 @@ extension GooseLocalDataExporter {
     }
 
     if exportSelfIncluded {
-      issues.append("export contains files from Documents/GooseSwift/Exports")
+      issues.append("export contains files from Documents/WhoofSwift/Exports")
     }
     if requiredOvernightSessionID != nil, !bleLogIncluded {
       issues.append("missing BLE log side channel")
@@ -270,7 +270,7 @@ extension GooseLocalDataExporter {
       issues.append("always-on BLE live log side channel does not contain current overnight session ID")
     }
 
-    return GooseLocalDataExportValidation(
+    return WhoofLocalDataExportValidation(
       requiredOvernightSessionID: requiredOvernightSessionID,
       bundleJSONValid: false,
       bundleJSONValidationError: "not checked",

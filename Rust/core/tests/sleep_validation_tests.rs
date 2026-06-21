@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     algorithm_compare::compare_sleep_v1_goose_to_reference,
     capture_import::{CapturedFrameBatchOptions, CapturedFrameInput, import_captured_frame_batch},
     historical_sync::{
@@ -401,7 +401,7 @@ fn sleep_v1_release_gate_validation_passes_only_when_all_evidence_reports_pass()
             .get("subgate_report_integrity_policies")
             .and_then(|policies| policies.get("historical-sync-validation.json"))
             .and_then(serde_json::Value::as_str),
-        Some(goose_core::historical_sync::HISTORICAL_SYNC_PHYSICAL_REPORT_INTEGRITY_POLICY)
+        Some(whoof_core::historical_sync::HISTORICAL_SYNC_PHYSICAL_REPORT_INTEGRITY_POLICY)
     );
     assert_eq!(
         report
@@ -427,7 +427,7 @@ fn sleep_v1_release_gate_validation_passes_only_when_all_evidence_reports_pass()
             .get("subgate_report_validation_policies")
             .and_then(|policies| policies.get("sleep-v1-benchmark.json"))
             .and_then(serde_json::Value::as_str),
-        Some(goose_core::algorithm_compare::SLEEP_V1_BENCHMARK_COMPARISON_POLICY)
+        Some(whoof_core::algorithm_compare::SLEEP_V1_BENCHMARK_COMPARISON_POLICY)
     );
     let benchmark_coverage = input.benchmark_comparisons[0]
         .data_coverage
@@ -685,7 +685,7 @@ fn sleep_v1_release_gate_validation_passes_only_when_all_evidence_reports_pass()
     let mut forged_physical = forged_input.physical_historical_sync.take().unwrap();
     forged_physical
         .next_actions
-        .push(goose_core::historical_sync::HistoricalSyncNextAction {
+        .push(whoof_core::historical_sync::HistoricalSyncNextAction {
             scope: "historical_sync_physical_validation".to_string(),
             reason: "forged_next_action".to_string(),
             action: "Do not accept hand-edited physical proof actions.".to_string(),
@@ -962,7 +962,7 @@ fn sleep_v1_release_gate_validation_passes_only_when_all_evidence_reports_pass()
     let mut forged_input = input.clone();
     let mut forged_window = forged_input.sleep_window_label_validation.take().unwrap();
     forged_window.next_actions.push(
-        goose_core::sleep_validation::SleepWindowLabelValidationNextAction {
+        whoof_core::sleep_validation::SleepWindowLabelValidationNextAction {
             scope: "sleep_window_validation".to_string(),
             reason: "forged_next_action".to_string(),
             action: "Do not accept hand-edited sleep-window actions.".to_string(),
@@ -1450,7 +1450,7 @@ fn sleep_v1_release_gate_validation_passes_only_when_all_evidence_reports_pass()
     let mut forged_input = input.clone();
     let mut forged_stability = forged_input.explanation_stability.take().unwrap();
     forged_stability.next_actions.push(
-        goose_core::sleep_validation::SleepV1ExplanationStabilityNextAction {
+        whoof_core::sleep_validation::SleepV1ExplanationStabilityNextAction {
             scope: "sleep_v1.stability".to_string(),
             reason: "forged_next_action".to_string(),
             action: "Do not accept hand-edited stability reports.".to_string(),
@@ -1725,7 +1725,7 @@ fn sleep_v1_release_gate_validation_passes_only_when_all_evidence_reports_pass()
     let mut forged_input = input.clone();
     let mut forged_benchmark = forged_input.benchmark_comparisons.remove(0);
     forged_benchmark.next_actions.push(
-        goose_core::algorithm_compare::AlgorithmComparisonNextAction {
+        whoof_core::algorithm_compare::AlgorithmComparisonNextAction {
             scope: "comparison".to_string(),
             reason: "forged_next_action".to_string(),
             action: "Do not accept hand-edited benchmark actions.".to_string(),
@@ -3209,7 +3209,7 @@ fn sleep_v1_evidence_folder_validation_passes_complete_auditable_folder() {
             .get("required_report_integrity_policies")
             .and_then(|policies| policies.get("historical-sync-validation.json"))
             .and_then(serde_json::Value::as_str),
-        Some(goose_core::historical_sync::HISTORICAL_SYNC_PHYSICAL_REPORT_INTEGRITY_POLICY)
+        Some(whoof_core::historical_sync::HISTORICAL_SYNC_PHYSICAL_REPORT_INTEGRITY_POLICY)
     );
     assert_eq!(
         report
@@ -3235,7 +3235,7 @@ fn sleep_v1_evidence_folder_validation_passes_complete_auditable_folder() {
             .get("required_report_validation_policies")
             .and_then(|policies| policies.get("sleep-v1-benchmark.json"))
             .and_then(serde_json::Value::as_str),
-        Some(goose_core::algorithm_compare::SLEEP_V1_BENCHMARK_COMPARISON_POLICY)
+        Some(whoof_core::algorithm_compare::SLEEP_V1_BENCHMARK_COMPARISON_POLICY)
     );
     assert!(report.required_files.iter().all(|file| file.exists));
     assert!(report.supporting_files.iter().all(|file| file.exists));
@@ -4697,7 +4697,7 @@ fn sleep_v1_evidence_folder_validation_rejects_hand_edited_release_gate_report_c
     release_report.hand_reviewed_window_comparisons = 1;
     release_report
         .next_actions
-        .push(goose_core::sleep_validation::SleepV1ReleaseGateNextAction {
+        .push(whoof_core::sleep_validation::SleepV1ReleaseGateNextAction {
             scope: "sleep_window.labels".to_string(),
             reason: "forged_next_action".to_string(),
             action: "Do not accept hand-edited release reports.".to_string(),
@@ -4748,7 +4748,7 @@ fn sleep_v1_evidence_folder_validation_rejects_hand_edited_release_gate_stage_la
     release_report.stage_label_comparison_count = 0;
     release_report
         .next_actions
-        .push(goose_core::sleep_validation::SleepV1ReleaseGateNextAction {
+        .push(whoof_core::sleep_validation::SleepV1ReleaseGateNextAction {
             scope: "sleep_stage.labels".to_string(),
             reason: "forged_next_action".to_string(),
             action: "Do not accept hand-edited stage-label release counts.".to_string(),
@@ -5817,7 +5817,7 @@ fn sleep_stage_label_validation_compares_user_owned_stage_labels() {
     );
     assert_eq!(
         report.provenance["report_integrity_policy"],
-        serde_json::json!(goose_core::sleep_validation::SLEEP_STAGE_LABEL_REPORT_INTEGRITY_POLICY)
+        serde_json::json!(whoof_core::sleep_validation::SLEEP_STAGE_LABEL_REPORT_INTEGRITY_POLICY)
     );
     assert!(
         report

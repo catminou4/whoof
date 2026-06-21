@@ -4,7 +4,7 @@ use std::{
     process::{Command, Stdio},
 };
 
-use goose_core::store::GooseStore;
+use whoof_core::store::GooseStore;
 
 #[test]
 fn neurokit_hrv_adapter_emits_external_reference_contract() {

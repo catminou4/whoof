@@ -22,7 +22,7 @@ final class HealthDataStore: ObservableObject {
   @Published var heartRateHourlyRanges: [HeartRateHourlyRange] = []
   @Published var heartRateTimelineStatus = "No HR samples stored"
 
-  let bridge = GooseRustBridge()
+  let bridge = WhoofRustBridge()
   let heartRateSeriesStore = HeartRateSeriesStore.shared
   var attemptedCatalogLoad = false
   var previewMissingData = false
@@ -40,8 +40,8 @@ final class HealthDataStore: ObservableObject {
   // Keyed by a cheap sample-set signature so it self-invalidates when HR data
   // changes. Not @Published: mutating it must not trigger view invalidation.
   var stressSummaryCache: [String: StressAlgorithmSummary] = [:]
-  let packetInputQueue = DispatchQueue(label: "com.goose.swift.health.packet-inputs", qos: .utility)
-  let heartRateTimelineQueue = DispatchQueue(label: "com.goose.swift.health.heart-rate-timeline", qos: .utility)
+  let packetInputQueue = DispatchQueue(label: "com.whoof.swift.health.packet-inputs", qos: .utility)
+  let heartRateTimelineQueue = DispatchQueue(label: "com.whoof.swift.health.heart-rate-timeline", qos: .utility)
   lazy var databasePath = HealthDataStore.defaultDatabasePath()
 
   static let liveHRVRMSSDDefaultsKey = "goose.swift.liveHRVRMSSD"
@@ -80,7 +80,7 @@ final class HealthDataStore: ObservableObject {
   static func defaultDatabasePath() -> String {
     let baseDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
       ?? FileManager.default.temporaryDirectory
-    let directory = baseDirectory.appendingPathComponent("GooseSwift", isDirectory: true)
+    let directory = baseDirectory.appendingPathComponent("WhoofSwift", isDirectory: true)
     try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     return directory.appendingPathComponent("goose.sqlite").path
   }
@@ -95,7 +95,7 @@ final class HealthDataStore: ObservableObject {
 
   var localHealthExportText: String {
     [
-      "Goose Health Export",
+      "Whoof Health Export",
       "Catalog: \(catalogStatus)",
       "Band sleep import: \(bandSleepImportStatus)",
       "HealthKit metric import: disabled; profile weight only",
@@ -174,7 +174,7 @@ final class HealthDataStore: ObservableObject {
     // .onAppear sites). Do the FFI off-main on a private bridge instance, then
     // parse + apply on the main actor — mirroring refreshHeartRateTimeline.
     packetInputQueue.async { [weak self] in
-      let bridge = GooseRustBridge()
+      let bridge = WhoofRustBridge()
       let outcome: Result<(Any, Any, Any), Error>
       do {
         let algorithmsValue = try bridge.requestValue(method: "metrics.built_in_definitions")

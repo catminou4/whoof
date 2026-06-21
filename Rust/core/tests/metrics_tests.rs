@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use goose_core::{
+use whoof_core::{
     metrics::{
         GOOSE_HRV_V0_ID, GOOSE_HRV_V0_VERSION, GOOSE_RECOVERY_V0_ID, GOOSE_SLEEP_V0_ID,
         GOOSE_SLEEP_V1_ID, GOOSE_STRAIN_V0_ID, GOOSE_STRESS_V0_ID, HrvInput, RecoveryInput,

@@ -3,11 +3,11 @@ import Foundation
 import OSLog
 
 
-final class GooseBLEClient: NSObject, ObservableObject {
+final class WhoofBLEClient: NSObject, ObservableObject {
   @Published var bluetoothState = "not requested"
   @Published var connectionState = "disconnected"
   @Published var isScanning = false
-  @Published var discoveredDevices: [GooseDiscoveredDevice] = []
+  @Published var discoveredDevices: [WhoofDiscoveredDevice] = []
   @Published var liveHeartRateBPM: Int?
   @Published var liveHeartRateSource = "waiting"
   @Published var liveHeartRateUpdatedAt: Date?
@@ -62,32 +62,32 @@ final class GooseBLEClient: NSObject, ObservableObject {
   @Published var strapClockStatus = "Not read"
   @Published var lastClockCommandFrameHex = ""
   @Published var lastClockResponsePayloadHex = ""
-  @Published var syncToast: GooseSyncToast?
-  @Published var lastSyncFailure: GooseSyncFailure?
-  @Published var syncFailureSheet: GooseSyncFailure?
+  @Published var syncToast: WhoofSyncToast?
+  @Published var lastSyncFailure: WhoofSyncFailure?
+  @Published var syncFailureSheet: WhoofSyncFailure?
   @Published var debugCommandStatus = "No debug command sent"
-  @Published var debugCommandResponses: [GooseDebugCommandResponse] = []
+  @Published var debugCommandResponses: [WhoofDebugCommandResponse] = []
   @Published var debugCommandSnapshotPath = "No debug command snapshot"
 
-  var onNotification: ((GooseNotificationEvent) -> Void)?
-  var onRawNotification: ((GooseNotificationEvent) -> Void)?
-  var onRawNotificationWithContext: ((GooseNotificationEvent, GooseBLENotificationContext) -> Void)?
-  var onCommandWrite: ((GooseCommandWriteEvent) -> Void)?
+  var onNotification: ((WhoofNotificationEvent) -> Void)?
+  var onRawNotification: ((WhoofNotificationEvent) -> Void)?
+  var onRawNotificationWithContext: ((WhoofNotificationEvent, WhoofBLENotificationContext) -> Void)?
+  var onCommandWrite: ((WhoofCommandWriteEvent) -> Void)?
   var onLiveHeartRate: ((Int, String, Date) -> Void)?
   var onHRVSample: ((Double, Int, String, Date) -> Void)?
   var onConnectionStateChange: ((String) -> Void)?
-  var onHistoricalSyncProgress: ((GooseHistoricalSyncProgress) -> Void)?
-  var onHistoricalRangeTelemetry: ((GooseHistoricalRangeTelemetry) -> Void)?
-  var onMessage: ((GooseMessage) -> Void)?
+  var onHistoricalSyncProgress: ((WhoofHistoricalSyncProgress) -> Void)?
+  var onHistoricalRangeTelemetry: ((WhoofHistoricalRangeTelemetry) -> Void)?
+  var onMessage: ((WhoofMessage) -> Void)?
 
-  let logger = Logger(subsystem: "com.goose.swift", category: "ble")
-  let coreBluetoothQueue = DispatchQueue(label: "com.goose.swift.corebluetooth", qos: .utility)
-  let realtimeVitalsQueue = DispatchQueue(label: "com.goose.swift.realtime-vitals", qos: .userInitiated)
-  let diagnosticLogQueue = DispatchQueue(label: "com.goose.swift.diagnostic-log", qos: .utility)
-  let bleUIStateAggregator = BLEUIStateAggregator(publishInterval: GooseBLEClient.bleUIStatePublishInterval)
-  let messageStore = GooseMessageStore(
-    maximumMessages: GooseBLEClient.maximumDisplayedMessages,
-    flushInterval: GooseBLEClient.displayedMessageFlushInterval
+  let logger = Logger(subsystem: "com.whoof.swift", category: "ble")
+  let coreBluetoothQueue = DispatchQueue(label: "com.whoof.swift.corebluetooth", qos: .utility)
+  let realtimeVitalsQueue = DispatchQueue(label: "com.whoof.swift.realtime-vitals", qos: .userInitiated)
+  let diagnosticLogQueue = DispatchQueue(label: "com.whoof.swift.diagnostic-log", qos: .utility)
+  let bleUIStateAggregator = BLEUIStateAggregator(publishInterval: WhoofBLEClient.bleUIStatePublishInterval)
+  let messageStore = WhoofMessageStore(
+    maximumMessages: WhoofBLEClient.maximumDisplayedMessages,
+    flushInterval: WhoofBLEClient.displayedMessageFlushInterval
   )
   let notificationContextLock = NSLock()
   var notificationContextActiveDeviceName = "WHOOP"
@@ -174,18 +174,18 @@ final class GooseBLEClient: NSObject, ObservableObject {
       return nil
     }
     guard let directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
-      GooseBLEClient.recordDiagnosticLogSetupWarning("goose-ble.log setup failed: Application Support directory unavailable")
+      WhoofBLEClient.recordDiagnosticLogSetupWarning("goose-ble.log setup failed: Application Support directory unavailable")
       return nil
     }
-    let gooseDirectory = directory.appendingPathComponent("GooseSwift", isDirectory: true)
+    let gooseDirectory = directory.appendingPathComponent("WhoofSwift", isDirectory: true)
     let url = gooseDirectory.appendingPathComponent("goose-ble.log")
     do {
-      try GooseBLEClient.prepareDiagnosticLogDirectory(gooseDirectory)
+      try WhoofBLEClient.prepareDiagnosticLogDirectory(gooseDirectory)
       if FileManager.default.fileExists(atPath: url.path) {
         try FileManager.default.removeItem(at: url)
       }
     } catch {
-      GooseBLEClient.recordDiagnosticLogSetupWarning("goose-ble.log setup failed: \(String(describing: error))")
+      WhoofBLEClient.recordDiagnosticLogSetupWarning("goose-ble.log setup failed: \(String(describing: error))")
       return nil
     }
     return url
@@ -198,31 +198,31 @@ final class GooseBLEClient: NSObject, ObservableObject {
       return nil
     }
     guard let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-      GooseBLEClient.recordDiagnosticLogSetupWarning("goose-ble-live.log mirror setup failed: Documents directory unavailable")
+      WhoofBLEClient.recordDiagnosticLogSetupWarning("goose-ble-live.log mirror setup failed: Documents directory unavailable")
       return nil
     }
-    let gooseDirectory = directory.appendingPathComponent("GooseSwift", isDirectory: true)
+    let gooseDirectory = directory.appendingPathComponent("WhoofSwift", isDirectory: true)
     let url = gooseDirectory.appendingPathComponent("goose-ble-live.log")
     do {
-      try GooseBLEClient.prepareDiagnosticLogFile(at: url, directory: gooseDirectory)
+      try WhoofBLEClient.prepareDiagnosticLogFile(at: url, directory: gooseDirectory)
     } catch {
-      GooseBLEClient.recordDiagnosticLogSetupWarning("goose-ble-live.log mirror setup failed: \(String(describing: error))")
+      WhoofBLEClient.recordDiagnosticLogSetupWarning("goose-ble-live.log mirror setup failed: \(String(describing: error))")
       return nil
     }
     return url
   }()
   let overnightSideChannelLogURL: URL? = {
     guard let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-      GooseBLEClient.recordDiagnosticLogSetupWarning("goose-ble-live.log setup failed: Documents directory unavailable")
+      WhoofBLEClient.recordDiagnosticLogSetupWarning("goose-ble-live.log setup failed: Documents directory unavailable")
       return nil
     }
-    let gooseDirectory = directory.appendingPathComponent("GooseSwift", isDirectory: true)
+    let gooseDirectory = directory.appendingPathComponent("WhoofSwift", isDirectory: true)
     let url = gooseDirectory.appendingPathComponent("goose-ble-live.log")
     do {
-      try GooseBLEClient.prepareDiagnosticLogFile(at: url, directory: gooseDirectory)
+      try WhoofBLEClient.prepareDiagnosticLogFile(at: url, directory: gooseDirectory)
       return url
     } catch {
-      GooseBLEClient.recordDiagnosticLogSetupWarning("goose-ble-live.log setup failed: \(String(describing: error))")
+      WhoofBLEClient.recordDiagnosticLogSetupWarning("goose-ble-live.log setup failed: \(String(describing: error))")
       return nil
     }
   }()
@@ -230,7 +230,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
   var peripherals: [UUID: CBPeripheral] = [:]
   var whoopCandidateIDs = Set<UUID>()
   var activePeripheral: CBPeripheral?
-  var messages: [GooseMessage] {
+  var messages: [WhoofMessage] {
     messageStore.messages
   }
   var commandCharacteristic: CBCharacteristic?
@@ -336,7 +336,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
     static let debugHistoricalRangeStatus = "goose.swift.debug.historicalRangeStatus"
   }
 
-  static let restorationIdentifier = "com.goose.swift.central"
+  static let restorationIdentifier = "com.whoof.swift.central"
   static let heartRatePublishInterval: TimeInterval = 1
   static let heartRateCallbackInterval: TimeInterval = 0.1
   static let notificationSyncPublishInterval: TimeInterval = 1
@@ -479,10 +479,10 @@ final class GooseBLEClient: NSObject, ObservableObject {
       case .get:
         return []
       case .set(let date):
-        let timestamp = GooseBLEClient.clockTimestampParts(for: date)
+        let timestamp = WhoofBLEClient.clockTimestampParts(for: date)
         var bytes: [UInt8] = []
-        GooseBLEClient.appendUInt32LE(timestamp.seconds, to: &bytes)
-        GooseBLEClient.appendUInt32LE(timestamp.subseconds, to: &bytes)
+        WhoofBLEClient.appendUInt32LE(timestamp.seconds, to: &bytes)
+        WhoofBLEClient.appendUInt32LE(timestamp.subseconds, to: &bytes)
         return bytes
       }
     }
@@ -607,7 +607,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
       if bytes.count < 8 {
         bytes.append(contentsOf: repeatElement(UInt8(0), count: 8 - bytes.count))
       }
-      GooseBLEClient.appendUInt16LE(loopControl, to: &bytes)
+      WhoofBLEClient.appendUInt16LE(loopControl, to: &bytes)
       bytes.append(overallLoop)
       bytes.append(durationSeconds)
       return bytes
@@ -670,9 +670,9 @@ final class GooseBLEClient: NSObject, ObservableObject {
         return [4, alarmID]
       case .set(let alarmID, let date, let pattern):
         var bytes: [UInt8] = [4, alarmID]
-        let timestamp = GooseBLEClient.alarmTimestampParts(for: date)
-        GooseBLEClient.appendUInt32LE(timestamp.seconds, to: &bytes)
-        GooseBLEClient.appendUInt16LE(timestamp.subseconds, to: &bytes)
+        let timestamp = WhoofBLEClient.alarmTimestampParts(for: date)
+        WhoofBLEClient.appendUInt32LE(timestamp.seconds, to: &bytes)
+        WhoofBLEClient.appendUInt16LE(timestamp.subseconds, to: &bytes)
         bytes.append(contentsOf: pattern.payloadBytes)
         return bytes
       case .run(let alarmID):
@@ -724,8 +724,8 @@ final class GooseBLEClient: NSObject, ObservableObject {
     let source: String
   }
 
-  static let debugResearchCommandDefinitions: [GooseDebugCommandDefinition] = [
-    GooseDebugCommandDefinition(
+  static let debugResearchCommandDefinitions: [WhoofDebugCommandDefinition] = [
+    WhoofDebugCommandDefinition(
       id: "get_body_location_and_status",
       title: "Body Location And Status",
       commandNumber: 84,
@@ -736,7 +736,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
       requiresPayloadHex: false,
       payloadHint: "no payload"
     ),
-    GooseDebugCommandDefinition(
+    WhoofDebugCommandDefinition(
       id: "get_research_packet",
       title: "Research Packet",
       commandNumber: 132,
@@ -747,7 +747,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
       requiresPayloadHex: false,
       payloadHint: "no payload"
     ),
-    GooseDebugCommandDefinition(
+    WhoofDebugCommandDefinition(
       id: "get_extended_battery_info",
       title: "Extended Battery Info",
       commandNumber: 98,
@@ -758,7 +758,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
       requiresPayloadHex: false,
       payloadHint: "no payload"
     ),
-    GooseDebugCommandDefinition(
+    WhoofDebugCommandDefinition(
       id: "get_battery_pack_info",
       title: "Battery Pack Info",
       commandNumber: 151,
@@ -769,7 +769,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
       requiresPayloadHex: false,
       payloadHint: "revision 01"
     ),
-    GooseDebugCommandDefinition(
+    WhoofDebugCommandDefinition(
       id: "get_led_drive",
       title: "LED Drive",
       commandNumber: 40,
@@ -780,7 +780,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
       requiresPayloadHex: false,
       payloadHint: "no payload"
     ),
-    GooseDebugCommandDefinition(
+    WhoofDebugCommandDefinition(
       id: "get_tia_gain",
       title: "TIA Gain",
       commandNumber: 42,
@@ -791,7 +791,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
       requiresPayloadHex: false,
       payloadHint: "no payload"
     ),
-    GooseDebugCommandDefinition(
+    WhoofDebugCommandDefinition(
       id: "get_bias_offset",
       title: "Bias Offset",
       commandNumber: 44,
@@ -802,7 +802,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
       requiresPayloadHex: false,
       payloadHint: "no payload"
     ),
-    GooseDebugCommandDefinition(
+    WhoofDebugCommandDefinition(
       id: "get_device_config_value",
       title: "Device Config Value",
       commandNumber: 121,
@@ -813,7 +813,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
       requiresPayloadHex: true,
       payloadHint: "64 hex key, or 66 hex revision+key"
     ),
-    GooseDebugCommandDefinition(
+    WhoofDebugCommandDefinition(
       id: "get_feature_flag_value",
       title: "Feature Flag Value",
       commandNumber: 128,
@@ -824,7 +824,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
       requiresPayloadHex: true,
       payloadHint: "64 hex key, or 66 hex revision+key"
     ),
-    GooseDebugCommandDefinition(
+    WhoofDebugCommandDefinition(
       id: "toggle_imu_mode_historical",
       title: "Toggle IMU Mode Historical",
       commandNumber: 105,
@@ -857,7 +857,7 @@ final class GooseBLEClient: NSObject, ObservableObject {
     canSendHello && !isHistoricalSyncing && supportsV5SensorCommands
   }
 
-  var debugResearchCommands: [GooseDebugCommandDefinition] {
+  var debugResearchCommands: [WhoofDebugCommandDefinition] {
     Self.debugResearchCommandDefinitions
   }
 

@@ -4,7 +4,7 @@ import Foundation
 enum CoachLocalToolContext {
   static func build(
     healthStore: HealthDataStore,
-    appModel: GooseAppModel
+    appModel: WhoofAppModel
   ) -> [String: Any] {
     let tools: [String: Any] = [
       "load_stats": loadStats(healthStore: healthStore, appModel: appModel),
@@ -22,7 +22,7 @@ enum CoachLocalToolContext {
 
   private static func loadStats(
     healthStore: HealthDataStore,
-    appModel: GooseAppModel
+    appModel: WhoofAppModel
   ) -> [String: Any] {
     [
       "readiness": [
@@ -55,7 +55,7 @@ enum CoachLocalToolContext {
 
   private static func vitals(
     healthStore: HealthDataStore,
-    appModel: GooseAppModel
+    appModel: WhoofAppModel
   ) -> [[String: Any]] {
     var rows = healthStore.healthMonitorSnapshots(
       restingHeartRateEstimateBPM: appModel.ble.restingHeartRateEstimateBPM,
@@ -84,7 +84,7 @@ enum CoachLocalToolContext {
     return rows
   }
 
-  private static func activities(appModel: GooseAppModel) -> [String: Any] {
+  private static func activities(appModel: WhoofAppModel) -> [String: Any] {
     let session = appModel.activitySession
     return [
       "active_session": [
@@ -106,7 +106,7 @@ enum CoachLocalToolContext {
     ]
   }
 
-  private static func captureSessions(appModel: GooseAppModel) -> [String: Any] {
+  private static func captureSessions(appModel: WhoofAppModel) -> [String: Any] {
     [
       "packet_import_status": appModel.packetImportStatus,
       "last_parsed_frame": appModel.lastParsedFrameSummary,
@@ -143,7 +143,7 @@ enum CoachLocalToolContext {
 
   private static func rawSessionData(
     healthStore: HealthDataStore,
-    appModel: GooseAppModel
+    appModel: WhoofAppModel
   ) -> [String: Any] {
     [
       "packet_inputs_status": healthStore.packetInputStatus,

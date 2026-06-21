@@ -1,4 +1,4 @@
-use goose_core::property_tests::{
+use whoof_core::property_tests::{
     PROPERTY_TEST_REPORT_SCHEMA, PropertyFailure, PropertyGroupReport, PropertySuiteOptions,
     property_group_next_actions, property_suite_next_actions, property_suite_report_from_groups,
     run_property_suite,

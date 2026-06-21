@@ -3,7 +3,7 @@ import Foundation
 import OSLog
 
 
-extension GooseBLEClient {
+extension WhoofBLEClient {
   func recordLiveHeartRate(_ bpm: Int, source: String, at date: Date = Date()) {
     guard (20...240).contains(bpm) else {
       record(level: .warn, source: source, title: "heart_rate.rejected", body: "\(bpm) bpm outside expected range")
@@ -189,7 +189,7 @@ extension GooseBLEClient {
   }
 
   func record(
-    level: GooseLogLevel = .info,
+    level: WhoofLogLevel = .info,
     source: String,
     title: String,
     body: String = ""
@@ -198,7 +198,7 @@ extension GooseBLEClient {
       return
     }
 
-    let message = GooseMessage(
+    let message = WhoofMessage(
       timestamp: Date(),
       level: level,
       source: source,
@@ -220,7 +220,7 @@ extension GooseBLEClient {
     writeConsoleDiagnosticLog(message)
   }
 
-  func enqueueDisplayedMessage(_ message: GooseMessage) {
+  func enqueueDisplayedMessage(_ message: WhoofMessage) {
     messageStore.enqueue(message)
   }
 
@@ -239,7 +239,7 @@ extension GooseBLEClient {
     }
   }
 
-  func appendDiagnosticLog(_ message: GooseMessage) {
+  func appendDiagnosticLog(_ message: WhoofMessage) {
     guard shouldPersistDiagnosticLog(message) else {
       return
     }
@@ -334,7 +334,7 @@ extension GooseBLEClient {
       diagnosticLogSetupWarnings.append(warning)
     }
     diagnosticLogSetupWarningLock.unlock()
-    Logger(subsystem: "com.goose.swift", category: "ble")
+    Logger(subsystem: "com.whoof.swift", category: "ble")
       .error("BLE diagnostic log setup failed: \(warning, privacy: .public)")
   }
 
@@ -382,7 +382,7 @@ extension GooseBLEClient {
     return unique
   }
 
-  func writeConsoleDiagnosticLog(_ message: GooseMessage) {
+  func writeConsoleDiagnosticLog(_ message: WhoofMessage) {
     guard diagnosticLoggingEnabled else {
       return
     }
@@ -410,7 +410,7 @@ extension GooseBLEClient {
     return timestamp
   }
 
-  func shouldDisplayMessage(_ message: GooseMessage) -> Bool {
+  func shouldDisplayMessage(_ message: WhoofMessage) -> Bool {
     if message.level == .warn || message.level == .error {
       return true
     }
@@ -466,14 +466,14 @@ extension GooseBLEClient {
     return false
   }
 
-  func shouldWriteOSLog(_ message: GooseMessage) -> Bool {
+  func shouldWriteOSLog(_ message: WhoofMessage) -> Bool {
     if message.level == .warn || message.level == .error {
       return true
     }
     return !isHighVolumeDiagnostic(message)
   }
 
-  func isHighVolumeDiagnostic(_ message: GooseMessage) -> Bool {
+  func isHighVolumeDiagnostic(_ message: WhoofMessage) -> Bool {
     if message.source == "ble.perf" {
       return true
     }
@@ -508,7 +508,7 @@ extension GooseBLEClient {
     return false
   }
 
-  func shouldPersistDiagnosticLog(_ message: GooseMessage) -> Bool {
+  func shouldPersistDiagnosticLog(_ message: WhoofMessage) -> Bool {
     if message.source == "ble.perf" {
       return true
     }

@@ -7,7 +7,7 @@ struct CodexLoginDeviceCode: Equatable {
 
 @MainActor
 enum CodexLocalToolContext {
-  static func build(healthStore: HealthDataStore, appModel: GooseAppModel) -> [String: Any] {
+  static func build(healthStore: HealthDataStore, appModel: WhoofAppModel) -> [String: Any] {
     [
       "generated_at": isoString(Date()),
       "tools": [
@@ -21,7 +21,7 @@ enum CodexLocalToolContext {
 
   private static func loadStats(
     healthStore: HealthDataStore,
-    appModel: GooseAppModel
+    appModel: WhoofAppModel
   ) -> [String: Any] {
     let routes: [HealthRoute] = [
       .healthMonitor,
@@ -69,7 +69,7 @@ enum CodexLocalToolContext {
 
   private static func getActivities(
     healthStore: HealthDataStore,
-    appModel: GooseAppModel
+    appModel: WhoofAppModel
   ) -> [String: Any] {
     let session = appModel.activitySession
     return [
@@ -94,7 +94,7 @@ enum CodexLocalToolContext {
     ]
   }
 
-  private static func getCaptureSessions(appModel: GooseAppModel) -> [String: Any] {
+  private static func getCaptureSessions(appModel: WhoofAppModel) -> [String: Any] {
     [
       "packet_import": appModel.packetImportStatus,
       "last_parsed_frame": appModel.lastParsedFrameSummary,
@@ -132,7 +132,7 @@ enum CodexLocalToolContext {
     ]
   }
 
-  private static func getRawSessionData(appModel: GooseAppModel) -> [String: Any] {
+  private static func getRawSessionData(appModel: WhoofAppModel) -> [String: Any] {
     [
       "latest_whoop_data_packet": appModel.latestWhoopDataPacketStatus,
       "latest_realtime_status_packet": appModel.latestRealtimeStatusPacketStatus,
@@ -166,7 +166,7 @@ enum CodexLocalToolContext {
     ]
   }
 
-  private static func devicePayload(_ ble: GooseBLEClient) -> [String: Any] {
+  private static func devicePayload(_ ble: WhoofBLEClient) -> [String: Any] {
     [
       "connection": ble.connectionState,
       "reconnect": ble.reconnectState,

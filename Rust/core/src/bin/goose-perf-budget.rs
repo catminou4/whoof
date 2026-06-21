@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     perf_budget::{DEFAULT_PERF_SCALE, PerfBudgetOptions, PerfBudgets, run_perf_budget},
     report::write_json_report,
     tool_args::{args, path_value, value},
@@ -11,7 +11,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let scale = optional_usize(&args, "--scale")?.unwrap_or(DEFAULT_PERF_SCALE);
     let output = path_value(&args, "--output")?;
@@ -43,26 +43,26 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn optional_usize(args: &[String], name: &str) -> goose_core::GooseResult<Option<usize>> {
+fn optional_usize(args: &[String], name: &str) -> whoof_core::GooseResult<Option<usize>> {
     Ok(value(args, name)?
         .map(|raw| {
             raw.parse::<usize>().map_err(|source| {
-                goose_core::GooseError::message(format!("invalid {name}: {source}"))
+                whoof_core::GooseError::message(format!("invalid {name}: {source}"))
             })
         })
         .transpose()?)
 }
 
-fn optional_u64(args: &[String], name: &str) -> goose_core::GooseResult<Option<u64>> {
+fn optional_u64(args: &[String], name: &str) -> whoof_core::GooseResult<Option<u64>> {
     Ok(value(args, name)?
         .map(|raw| {
             raw.parse::<u64>().map_err(|source| {
-                goose_core::GooseError::message(format!("invalid {name}: {source}"))
+                whoof_core::GooseError::message(format!("invalid {name}: {source}"))
             })
         })
         .transpose()?)
 }
 
-fn optional_mib(args: &[String], name: &str) -> goose_core::GooseResult<Option<u64>> {
+fn optional_mib(args: &[String], name: &str) -> whoof_core::GooseResult<Option<u64>> {
     Ok(optional_u64(args, name)?.map(|value| value * 1024 * 1024))
 }

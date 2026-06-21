@@ -1,4 +1,4 @@
-use goose_core::protocol::{
+use whoof_core::protocol::{
     COMMAND_GET_HELLO, DataPacketBodySummary, DeviceType, FrameAccumulator, Gen4SensorData,
     I16SeriesSummary, PACKET_TYPE_COMMAND_RESPONSE, PACKET_TYPE_EVENT, PACKET_TYPE_HISTORICAL_DATA,
     PACKET_TYPE_REALTIME_DATA, PACKET_TYPE_REALTIME_RAW_DATA, ParsedPayload,
@@ -96,7 +96,7 @@ fn gen4_and_gen5_framing_differ_for_same_command() {
 /// trips through `parse_frame(DeviceType::Gen4, ..)`.
 fn gen4_history_frame(k: u8, len: usize, fields: &[(usize, u8)]) -> Vec<u8> {
     let mut payload = vec![0u8; len];
-    payload[0] = goose_core::protocol::PACKET_TYPE_HISTORICAL_DATA;
+    payload[0] = whoof_core::protocol::PACKET_TYPE_HISTORICAL_DATA;
     payload[1] = k;
     for &(offset, value) in fields {
         payload[offset] = value;

@@ -7,13 +7,13 @@ import UIKit
 import HealthKit
 #endif
 
-struct GooseLocalDataExportResult {
+struct WhoofLocalDataExportResult {
   let url: URL
   let manifestURL: URL?
   let manifestError: String?
   let fileCount: Int
   let byteCount: UInt64
-  let validation: GooseLocalDataExportValidation
+  let validation: WhoofLocalDataExportValidation
 
   var manifestStatusSuffix: String {
     if let manifestURL {
@@ -26,7 +26,7 @@ struct GooseLocalDataExportResult {
   }
 }
 
-enum GooseLocalDataExportError: LocalizedError, CustomStringConvertible {
+enum WhoofLocalDataExportError: LocalizedError, CustomStringConvertible {
   case invalidBundleJSON(String)
   case outputAlreadyExists(String)
 
@@ -44,7 +44,7 @@ enum GooseLocalDataExportError: LocalizedError, CustomStringConvertible {
   }
 }
 
-struct GooseLocalDataExportValidation {
+struct WhoofLocalDataExportValidation {
   let requiredOvernightSessionID: String?
   let bundleJSONValid: Bool
   let bundleJSONValidationError: String?
@@ -214,8 +214,8 @@ struct GooseLocalDataExportValidation {
     ]
   }
 
-  func withBundleJSONValidation(valid: Bool, error: String?) -> GooseLocalDataExportValidation {
-    GooseLocalDataExportValidation(
+  func withBundleJSONValidation(valid: Bool, error: String?) -> WhoofLocalDataExportValidation {
+    WhoofLocalDataExportValidation(
       requiredOvernightSessionID: requiredOvernightSessionID,
       bundleJSONValid: valid,
       bundleJSONValidationError: error,
@@ -292,8 +292,8 @@ struct GooseLocalDataExportValidation {
     )
   }
 
-  func withAdditionalIssue(_ issue: String) -> GooseLocalDataExportValidation {
-    GooseLocalDataExportValidation(
+  func withAdditionalIssue(_ issue: String) -> WhoofLocalDataExportValidation {
+    WhoofLocalDataExportValidation(
       requiredOvernightSessionID: requiredOvernightSessionID,
       bundleJSONValid: bundleJSONValid,
       bundleJSONValidationError: bundleJSONValidationError,
@@ -371,7 +371,7 @@ struct GooseLocalDataExportValidation {
   }
 }
 
-struct GooseOvernightExportMetrics {
+struct WhoofOvernightExportMetrics {
   var rawNotificationCount = 0
   var historicalRangePollRecordCount = 0
   var successfulHistoricalRangePollCount = 0
@@ -415,7 +415,7 @@ struct GooseOvernightExportMetrics {
   var proofSidecarWarnings: [String] = []
 }
 
-enum GooseLocalDataExporter {
+enum WhoofLocalDataExporter {
   struct FileContentDigest {
     let byteCount: UInt64
     let sha256: String
@@ -429,14 +429,14 @@ enum GooseLocalDataExporter {
     return formatter
   }()
 
-  static func createBundle(requiredOvernightSessionID: String? = nil) throws -> GooseLocalDataExportResult {
+  static func createBundle(requiredOvernightSessionID: String? = nil) throws -> WhoofLocalDataExportResult {
     let fileManager = FileManager.default
     let now = Date()
     let createdAt = ISO8601DateFormatter().string(from: now)
     let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
       ?? fileManager.temporaryDirectory
     let exportsDirectory = documentsDirectory
-      .appendingPathComponent("GooseSwift", isDirectory: true)
+      .appendingPathComponent("WhoofSwift", isDirectory: true)
       .appendingPathComponent("Exports", isDirectory: true)
     try fileManager.createDirectory(at: exportsDirectory, withIntermediateDirectories: true)
     try applyExportProtection(to: exportsDirectory)
@@ -563,10 +563,10 @@ enum GooseLocalDataExporter {
       try writeString("}\n", to: handle)
       try synchronizeAndClose(handle)
       if let validationError = bundleJSONStructureIssue(at: temporaryURL) {
-        throw GooseLocalDataExportError.invalidBundleJSON(validationError)
+        throw WhoofLocalDataExportError.invalidBundleJSON(validationError)
       }
       if fileManager.fileExists(atPath: outputURL.path) {
-        throw GooseLocalDataExportError.outputAlreadyExists(outputURL.path)
+        throw WhoofLocalDataExportError.outputAlreadyExists(outputURL.path)
       }
       try fileManager.moveItem(at: temporaryURL, to: outputURL)
       try applyExportProtection(to: outputURL)
@@ -603,13 +603,13 @@ enum GooseLocalDataExporter {
       manifestURL = nil
       manifestError = String(describing: error)
     }
-    let resultValidation: GooseLocalDataExportValidation
+    let resultValidation: WhoofLocalDataExportValidation
     if let manifestError, !manifestError.isEmpty {
       resultValidation = validation.withAdditionalIssue("export manifest sidecar failed: \(manifestError)")
     } else {
       resultValidation = validation
     }
-    return GooseLocalDataExportResult(
+    return WhoofLocalDataExportResult(
       url: outputURL,
       manifestURL: manifestURL,
       manifestError: manifestError,
@@ -627,7 +627,7 @@ enum GooseLocalDataExporter {
     fileCount: Int,
     byteCount: UInt64,
     files: [[String: Any]],
-    validation: GooseLocalDataExportValidation
+    validation: WhoofLocalDataExportValidation
   ) throws -> URL {
     let manifestURL = bundleURL
       .deletingPathExtension()

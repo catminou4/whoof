@@ -1,4 +1,4 @@
-use goose_core::perf_budget::{
+use whoof_core::perf_budget::{
     PERF_BUDGET_REPORT_SCHEMA, PerfBudgetOptions, PerfBudgets, run_perf_budget,
 };
 

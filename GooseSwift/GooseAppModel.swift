@@ -3,7 +3,7 @@ import UIKit
 
 
 @MainActor
-final class GooseAppModel: ObservableObject {
+final class WhoofAppModel: ObservableObject {
   @Published var onboardingComplete = false
   @Published var rustStatus = "Rust bridge not checked"
   @Published var helloSummary = "Client hello not prepared"
@@ -44,7 +44,7 @@ final class GooseAppModel: ObservableObject {
   @Published var overnightGuardSQLiteMirrorSummary = "SQLite mirror not started"
   @Published var overnightGuardPowerSummary = "Power not checked"
   @Published var overnightGuardWatchdogSummary = "Watchdog not checked"
-  @Published var overnightGuardWarning = "Keep the official WHOOP app closed until Goose final sync/export finishes."
+  @Published var overnightGuardWarning = "Keep the official WHOOP app closed until Whoof final sync/export finishes."
   @Published var overnightGuardExportStatus = "No overnight export"
   @Published var overnightGuardExportInProgress = false
   @Published var overnightGuardExportURL: URL?
@@ -52,38 +52,38 @@ final class GooseAppModel: ObservableObject {
   @Published var overnightGuardExportManifestError: String?
   @Published var overnightGuardCanExportLastSession = false
 
-  let ble: GooseBLEClient
+  let ble: WhoofBLEClient
   let packetMonitor = PacketMonitorModel()
   let activitySession = ActivitySessionModel()
   let activityLocationTracker = ActivityLocationTracker()
-  let rust = GooseRustBridge()
+  let rust = WhoofRustBridge()
   let notificationFrameParser = NotificationFrameParser()
-  let notificationIngestQueue = DispatchQueue(label: "com.goose.swift.notification-ingest", qos: .utility)
+  let notificationIngestQueue = DispatchQueue(label: "com.whoof.swift.notification-ingest", qos: .utility)
   let notificationIngestStateLock = NSLock()
-  let notificationParseQueue = DispatchQueue(label: "com.goose.swift.notification-parse", qos: .utility)
+  let notificationParseQueue = DispatchQueue(label: "com.whoof.swift.notification-parse", qos: .utility)
   let notificationParseStateLock = NSLock()
-  let captureFrameRowBuildQueue = DispatchQueue(label: "com.goose.swift.capture-frame-row-build", qos: .utility)
-  let rustStartupQueue = DispatchQueue(label: "com.goose.swift.rust-startup", qos: .utility)
-  let activityTimelineRefreshQueue = DispatchQueue(label: "com.goose.swift.activity-timeline-refresh", qos: .utility)
-  let captureStatusSnapshotWriteQueue = DispatchQueue(label: "com.goose.swift.capture-status-snapshot", qos: .utility)
+  let captureFrameRowBuildQueue = DispatchQueue(label: "com.whoof.swift.capture-frame-row-build", qos: .utility)
+  let rustStartupQueue = DispatchQueue(label: "com.whoof.swift.rust-startup", qos: .utility)
+  let activityTimelineRefreshQueue = DispatchQueue(label: "com.whoof.swift.activity-timeline-refresh", qos: .utility)
+  let captureStatusSnapshotWriteQueue = DispatchQueue(label: "com.whoof.swift.capture-status-snapshot", qos: .utility)
   let heartRateSamplePipeline = HeartRateSamplePipeline(
-    timelinePublishInterval: GooseAppModel.heartRateHourlyRangePublishInterval
+    timelinePublishInterval: WhoofAppModel.heartRateHourlyRangePublishInterval
   )
   let packetUIStateAggregator = PacketUIStateAggregator(
-    publishInterval: GooseAppModel.packetUIStatePublishInterval,
-    maximumPendingDeviceSignalPoints: GooseAppModel.maxRecentDeviceSignalPoints
+    publishInterval: WhoofAppModel.packetUIStatePublishInterval,
+    maximumPendingDeviceSignalPoints: WhoofAppModel.maxRecentDeviceSignalPoints
   )
   let whoopDataSignalPipeline: WhoopDataSignalPipeline
   let healthPacketCaptureFamilyAggregator = HealthPacketCaptureFamilyAggregator(
-    publishInterval: GooseAppModel.healthPacketCaptureUIUpdateInterval
+    publishInterval: WhoofAppModel.healthPacketCaptureUIUpdateInterval
   )
   let captureFrameWriteQueue = CaptureFrameWriteQueue(
     databasePath: HealthDataStore.defaultDatabasePath(),
-    maxQueuedRows: GooseAppModel.captureFrameWriteQueueMaxRows,
-    maxBatchRows: GooseAppModel.captureFrameWriteBatchMaxRows
+    maxQueuedRows: WhoofAppModel.captureFrameWriteQueueMaxRows,
+    maxBatchRows: WhoofAppModel.captureFrameWriteBatchMaxRows
   )
   let captureFrameEnqueueAggregator = CaptureFrameEnqueueAggregator(
-    publishInterval: GooseAppModel.packetUIStatePublishInterval
+    publishInterval: WhoofAppModel.packetUIStatePublishInterval
   )
   let overnightSQLiteMirror = OvernightSQLiteMirrorQueue(databasePath: HealthDataStore.defaultDatabasePath())
   let passiveActivityDetectionPipeline = PassiveActivityDetectionPipeline()
@@ -267,7 +267,7 @@ final class GooseAppModel: ObservableObject {
     guard let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
       return nil
     }
-    let gooseDirectory = directory.appendingPathComponent("GooseSwift", isDirectory: true)
+    let gooseDirectory = directory.appendingPathComponent("WhoofSwift", isDirectory: true)
     try? FileManager.default.createDirectory(at: gooseDirectory, withIntermediateDirectories: true)
     return gooseDirectory.appendingPathComponent("capture-status.txt")
   }()
@@ -308,7 +308,7 @@ final class GooseAppModel: ObservableObject {
   static let overnightGuardWarningRepeatInterval: TimeInterval = 15 * 60
 
   init(startBLE: Bool = true) {
-    ble = GooseBLEClient(startCentral: startBLE)
+    ble = WhoofBLEClient(startCentral: startBLE)
     whoopDataSignalPipeline = WhoopDataSignalPipeline(
       ble: ble,
       packetUIStateAggregator: packetUIStateAggregator,

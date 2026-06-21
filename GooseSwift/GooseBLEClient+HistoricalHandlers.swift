@@ -3,7 +3,7 @@ import Foundation
 import OSLog
 
 
-extension GooseBLEClient {
+extension WhoofBLEClient {
   func handleHistoricalSyncValue(_ value: Data, characteristic: CBCharacteristic) {
     guard isHistoricalSyncing else {
       return
@@ -647,7 +647,7 @@ extension GooseBLEClient {
     historicalRangePollOnly = false
     publishHistoricalPacketCountIfNeeded(force: true)
     historicalSyncStatus = "failed"
-    let failure = GooseSyncFailure(title: "Sync Failed", message: message, occurredAt: Date())
+    let failure = WhoofSyncFailure(title: "Sync Failed", message: message, occurredAt: Date())
     lastSyncFailure = failure
     syncFailureSheet = failure
     publishSyncToast(phase: .failed, detail: "Tap for details", clearAfter: 4.5)
@@ -688,7 +688,7 @@ extension GooseBLEClient {
     }
 
     onHistoricalSyncProgress?(
-      GooseHistoricalSyncProgress(
+      WhoofHistoricalSyncProgress(
         status: status,
         detail: detail,
         packetCount: historicalPacketsReceivedThisSync,
@@ -700,7 +700,7 @@ extension GooseBLEClient {
   }
 
   func publishSyncToast(
-    phase: GooseSyncToastPhase,
+    phase: WhoofSyncToastPhase,
     titleOverride: String? = nil,
     detail: String,
     clearAfter: TimeInterval? = nil
@@ -715,7 +715,7 @@ extension GooseBLEClient {
     case .failed:
       title = "Sync Failed"
     }
-    syncToast = GooseSyncToast(phase: phase, title: titleOverride ?? title, detail: detail)
+    syncToast = WhoofSyncToast(phase: phase, title: titleOverride ?? title, detail: detail)
     guard let clearAfter else {
       return
     }

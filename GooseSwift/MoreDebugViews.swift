@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MoreDebugView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   @EnvironmentObject private var packetMonitor: PacketMonitorModel
   @ObservedObject var store: MoreDataStore
   @AppStorage(OnboardingStorage.onboardingComplete) private var onboardingComplete = false
@@ -512,18 +512,18 @@ struct MoreDebugView: View {
     return model.ble.connectionState == "ready" ? .pending : .blocked
   }
 
-  private func debugCommandActionStatus(_ command: GooseDebugCommandDefinition) -> MoreStatusKind {
+  private func debugCommandActionStatus(_ command: WhoofDebugCommandDefinition) -> MoreStatusKind {
     if model.ble.connectionState != "ready" {
       return .blocked
     }
     return command.risk == "read" ? .pending : .stale
   }
 
-  private func debugCommandDetail(_ command: GooseDebugCommandDefinition) -> String {
+  private func debugCommandDetail(_ command: WhoofDebugCommandDefinition) -> String {
     "id \(command.id) | cmd \(command.commandNumber) | \(command.payloadHint) | \(command.risk)"
   }
 
-  private func debugCommandResponseDetail(_ response: GooseDebugCommandResponse) -> String {
+  private func debugCommandResponseDetail(_ response: WhoofDebugCommandResponse) -> String {
     let body = response.responseBodyHex.isEmpty
       ? "no body"
       : "body \(String(response.responseBodyHex.prefix(96)))"
@@ -533,7 +533,7 @@ struct MoreDebugView: View {
     return "\(response.status) | \(response.result) | seq \(response.sequence) | \(body) | \(payload) | src \(response.source)"
   }
 
-  private func debugCommandIcon(_ command: GooseDebugCommandDefinition) -> String {
+  private func debugCommandIcon(_ command: WhoofDebugCommandDefinition) -> String {
     switch command.family {
     case "battery":
       return "battery.100"

@@ -246,7 +246,7 @@ final class PassiveActivityDetectionPipeline {
   var onEvents: (([PassiveActivityDetectionEvent]) -> Void)?
   var onStatus: ((String) -> Void)?
 
-  private let queue = DispatchQueue(label: "com.goose.swift.passive-activity-detection", qos: .utility)
+  private let queue = DispatchQueue(label: "com.whoof.swift.passive-activity-detection", qos: .utility)
   private let detector = PassiveActivityDetector()
   private let stateLock = NSLock()
   private var queuedOperationCount = 0

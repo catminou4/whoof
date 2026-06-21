@@ -1,5 +1,5 @@
-use goose_core::activity_identity::{ActivityIdentityInput, activity_idempotency_key};
-use goose_core::health_sync::{
+use whoof_core::activity_identity::{ActivityIdentityInput, activity_idempotency_key};
+use whoof_core::health_sync::{
     ActivityHealthSyncDryRunInput, ActivitySyncCandidate, ActivitySyncInterval, ActivitySyncMetric,
     ExistingHealthRecord, HealthPlatform, HealthSyncCandidate, HealthSyncDeletePolicy,
     HealthSyncDryRunInput, HealthSyncPartialPlanPolicy, HealthSyncSessionKind, HealthSyncWindow,

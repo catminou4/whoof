@@ -33,7 +33,7 @@ struct BLEUIStateSnapshot {
 final class BLEUIStateAggregator {
   var onSnapshot: ((BLEUIStateSnapshot) -> Void)?
 
-  private let queue = DispatchQueue(label: "com.goose.swift.ble-ui-state", qos: .utility)
+  private let queue = DispatchQueue(label: "com.whoof.swift.ble-ui-state", qos: .utility)
   private let publishInterval: TimeInterval
   private var publishScheduled = false
   private var lastPublishedAt = Date.distantPast

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CoachView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   @EnvironmentObject private var router: AppRouter
   @ObservedObject var healthStore: HealthDataStore
   @StateObject private var chat = OpenAICoachChatModel()
@@ -131,7 +131,7 @@ private struct CoachOverviewSnapshot {
   let gaps: [CoachDataGap]
 
   @MainActor
-  static func make(healthStore: HealthDataStore, appModel: GooseAppModel) -> CoachOverviewSnapshot {
+  static func make(healthStore: HealthDataStore, appModel: WhoofAppModel) -> CoachOverviewSnapshot {
     let homeTip = CoachTipFactory.homeTip(healthStore: healthStore, appModel: appModel)
     let readiness = healthStore.metricInputReadinessSummary()
     let inputNextAction = healthStore.metricInputReadinessNextActionSummary()
@@ -669,7 +669,7 @@ private struct CoachProfileMenu: View {
 #Preview("Signed out") {
   NavigationStack {
     CoachView(healthStore: HealthDataStore())
-      .environmentObject(GooseAppModel(startBLE: false))
+      .environmentObject(WhoofAppModel(startBLE: false))
       .environmentObject(AppRouter())
   }
 }

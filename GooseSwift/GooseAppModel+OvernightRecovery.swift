@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-extension GooseAppModel {
+extension WhoofAppModel {
   func recoverUncleanOvernightGuardSessionIfNeeded() {
     guard !overnightGuardActive, overnightGuardSession == nil else {
       return
@@ -77,7 +77,7 @@ extension GooseAppModel {
       overnightGuardExportManifestError = nil
       overnightGuardExportInProgress = false
       overnightGuardCanExportLastSession = false
-      overnightGuardWarning = "Resumed previous overnight guard. Last heartbeat \(Self.overnightRecoveredStatusSummary(recovered)). Keep the official WHOOP app closed until Goose final sync/export finishes."
+      overnightGuardWarning = "Resumed previous overnight guard. Last heartbeat \(Self.overnightRecoveredStatusSummary(recovered)). Keep the official WHOOP app closed until Whoof final sync/export finishes."
       refreshOvernightPowerState(reason: "resume", record: true)
       refreshOvernightReadiness(reason: "resume", record: true)
       enqueueOvernightSQLiteSession(finalStatus: "active", notes: "resumed_unclean_session")
@@ -113,7 +113,7 @@ extension GooseAppModel {
       overnightGuardExportManifestURL = nil
       overnightGuardExportManifestError = nil
       overnightGuardCanExportLastSession = true
-      overnightGuardWarning = "Previous overnight guard did not close cleanly; last heartbeat \(Self.overnightRecoveredStatusSummary(recovered)). Export Goose before opening the official WHOOP app."
+      overnightGuardWarning = "Previous overnight guard did not close cleanly; last heartbeat \(Self.overnightRecoveredStatusSummary(recovered)). Export Whoof before opening the official WHOOP app."
       refreshOvernightReadiness(reason: "resume_failed", record: true)
       ble.record(
         level: .error,
@@ -336,7 +336,7 @@ extension GooseAppModel {
     let statusURL = directoryURL.appendingPathComponent("status.txt")
     guard var manifest = readJSONObject(at: manifestURL) else {
       throw NSError(
-        domain: "GooseOvernightGuard",
+        domain: "WhoofOvernightGuard",
         code: 1,
         userInfo: [NSLocalizedDescriptionKey: "missing or invalid recovered manifest"]
       )

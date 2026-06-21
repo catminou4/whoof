@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 struct DeviceView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
 
   var body: some View {
     DeviceContentView(ble: model.ble)
@@ -16,9 +16,9 @@ private enum DevicePanel {
 }
 
 private struct DeviceContentView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   @EnvironmentObject private var packetMonitor: PacketMonitorModel
-  @ObservedObject var ble: GooseBLEClient
+  @ObservedObject var ble: WhoofBLEClient
   @State private var selectedPanel: DevicePanel = .status
 
   var body: some View {
@@ -294,10 +294,10 @@ private struct BatteryRail: View {
 }
 
 private struct DeviceAdvancedPanel: View {
-  @EnvironmentObject private var messageStore: GooseMessageStore
-  @ObservedObject var model: GooseAppModel
+  @EnvironmentObject private var messageStore: WhoofMessageStore
+  @ObservedObject var model: WhoofAppModel
   @ObservedObject var packetMonitor: PacketMonitorModel
-  @ObservedObject var ble: GooseBLEClient
+  @ObservedObject var ble: WhoofBLEClient
 
   var body: some View {
     VStack(alignment: .leading, spacing: 22) {
@@ -445,8 +445,8 @@ private struct DeviceFactRow: View {
 }
 
 private struct DeviceActionGrid: View {
-  @ObservedObject var model: GooseAppModel
-  @ObservedObject var ble: GooseBLEClient
+  @ObservedObject var model: WhoofAppModel
+  @ObservedObject var ble: WhoofBLEClient
 
   private let columns = [
     GridItem(.flexible(), spacing: 10),
@@ -547,7 +547,7 @@ private struct DeviceActionButton: View {
 }
 
 private struct DiscoveredDeviceList: View {
-  @ObservedObject var ble: GooseBLEClient
+  @ObservedObject var ble: WhoofBLEClient
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -598,7 +598,7 @@ private struct DiscoveredDeviceList: View {
 }
 
 private struct EventLogPreview: View {
-  let messages: [GooseMessage]
+  let messages: [WhoofMessage]
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -659,7 +659,7 @@ private func relativeSummary(for date: Date?) -> String? {
   return formatter.localizedString(for: date, relativeTo: Date()).capitalized
 }
 
-private let deviceScreenBackground = GooseTheme.appBackground
+private let deviceScreenBackground = WhoofTheme.appBackground
 private let devicePrimaryText = Color(uiColor: .label)
 private let controlBackground = Color(uiColor: UIColor { traits in
   traits.userInterfaceStyle == .dark

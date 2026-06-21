@@ -79,7 +79,7 @@ final class OvernightRawNotificationSpool: @unchecked Sendable {
   private static let eventLogSyncInterval: TimeInterval = 5
   private static let checkpointInterval: TimeInterval = 60
 
-  private let queue = DispatchQueue(label: "com.goose.swift.overnight-raw-spool", qos: .utility)
+  private let queue = DispatchQueue(label: "com.whoof.swift.overnight-raw-spool", qos: .utility)
   private var sessionID: String?
   private var directoryURL: URL?
   private var rawNotificationsURL: URL?
@@ -330,7 +330,7 @@ final class OvernightRawNotificationSpool: @unchecked Sendable {
     return try result.get()
   }
 
-  func append(event: GooseNotificationEvent, activeDeviceName: String, connectionState: String) -> OvernightRawSpoolSnapshot {
+  func append(event: WhoofNotificationEvent, activeDeviceName: String, connectionState: String) -> OvernightRawSpoolSnapshot {
     queue.sync {
       guard let handle, let sessionID else {
         lastError = "raw spool is not active"
@@ -413,7 +413,7 @@ final class OvernightRawNotificationSpool: @unchecked Sendable {
     }
   }
 
-  func appendHistoricalRangeTelemetry(_ telemetry: GooseHistoricalRangeTelemetry) -> OvernightRawSpoolSnapshot {
+  func appendHistoricalRangeTelemetry(_ telemetry: WhoofHistoricalRangeTelemetry) -> OvernightRawSpoolSnapshot {
     queue.sync {
       guard let handle = historicalRangePollsHandle, let sessionID else {
         lastError = "historical range spool is not active"
@@ -458,7 +458,7 @@ final class OvernightRawNotificationSpool: @unchecked Sendable {
     }
   }
 
-  func appendCommandWrite(_ event: GooseCommandWriteEvent, activeDeviceName: String, connectionState: String) -> OvernightRawSpoolSnapshot {
+  func appendCommandWrite(_ event: WhoofCommandWriteEvent, activeDeviceName: String, connectionState: String) -> OvernightRawSpoolSnapshot {
     queue.sync {
       guard let handle = commandWritesHandle, let sessionID else {
         lastError = "command write spool is not active"
@@ -502,7 +502,7 @@ final class OvernightRawNotificationSpool: @unchecked Sendable {
     }
   }
 
-  func appendEventLog(_ message: GooseMessage) -> OvernightRawSpoolSnapshot {
+  func appendEventLog(_ message: WhoofMessage) -> OvernightRawSpoolSnapshot {
     queue.sync {
       guard let handle = eventLogHandle, let sessionID else {
         lastError = "event log spool is not active"

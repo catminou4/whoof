@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-enum GooseTheme {
+enum WhoofTheme {
   static let deviceBackground = Color(red: 0.06, green: 0.09, blue: 0.11)
 
   static let appBackground = Color(uiColor: UIColor { traits in
@@ -53,15 +53,15 @@ enum GooseTheme {
 
 extension View {
   func gooseScreenBackground() -> some View {
-    background(GooseTheme.appBackground.ignoresSafeArea())
+    background(WhoofTheme.appBackground.ignoresSafeArea())
   }
 
   func goosePlainBackground() -> some View {
-    background(GooseTheme.plainBackground.ignoresSafeArea())
+    background(WhoofTheme.plainBackground.ignoresSafeArea())
   }
 
   func gooseListBackground() -> some View {
     scrollContentBackground(.hidden)
-      .background(GooseTheme.appBackground.ignoresSafeArea())
+      .background(WhoofTheme.appBackground.ignoresSafeArea())
   }
 }

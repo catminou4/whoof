@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     report::write_json_report,
     sleep_validation::{
@@ -18,7 +18,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let Some(database_path) = value(&args, "--db")? else {
         return Err(GooseError::message("missing --db <goose.sqlite>"));
@@ -76,7 +76,7 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn optional_f64(args: &[String], name: &str) -> goose_core::GooseResult<Option<f64>> {
+fn optional_f64(args: &[String], name: &str) -> whoof_core::GooseResult<Option<f64>> {
     value(args, name)?.map_or(Ok(None), |raw| {
         raw.parse::<f64>()
             .map(Some)
@@ -84,7 +84,7 @@ fn optional_f64(args: &[String], name: &str) -> goose_core::GooseResult<Option<f
     })
 }
 
-fn optional_usize(args: &[String], name: &str) -> goose_core::GooseResult<Option<usize>> {
+fn optional_usize(args: &[String], name: &str) -> whoof_core::GooseResult<Option<usize>> {
     value(args, name)?.map_or(Ok(None), |raw| {
         raw.parse::<usize>()
             .map(Some)

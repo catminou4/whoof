@@ -4,7 +4,7 @@ import SwiftUI
 import UIKit
 
 struct LiveActivityView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
 
   var body: some View {
     LiveActivityContentView(

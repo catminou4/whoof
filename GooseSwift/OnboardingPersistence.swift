@@ -110,7 +110,7 @@ struct OnboardingPersistedState: Codable {
 }
 
 enum OnboardingProfilePersistence {
-  private static let keychainService = "com.goose.swift.onboarding"
+  private static let keychainService = "com.whoof.swift.onboarding"
   private static let keychainAccount = "profile"
 
   static func loadState() -> OnboardingPersistedState? {

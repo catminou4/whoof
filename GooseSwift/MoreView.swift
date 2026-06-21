@@ -8,7 +8,7 @@ import HealthKit
 #endif
 
 struct MoreView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   @EnvironmentObject private var router: AppRouter
   @ObservedObject private var healthStore: HealthDataStore
   @StateObject private var store: MoreDataStore

@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     capture_import::ensure_database_parent,
     report::write_json_report,
     storage_check::{StorageCheckOptions, check_storage_database},
@@ -12,7 +12,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let db = default_path(&args, "--db", "goose.sqlite")?;
     let output = path_value(&args, "--output")?;

@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     capture_import::{CapturedFrameBatchOptions, CapturedFrameInput, import_captured_frame_batch},
     protocol::{DeviceType, PACKET_TYPE_REALTIME_RAW_DATA, build_v5_payload_frame},
     store::GooseStore,

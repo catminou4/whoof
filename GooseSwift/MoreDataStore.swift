@@ -11,7 +11,7 @@ import HealthKit
 final class MoreDataStore: ObservableObject {
   @Published var databasePath: String
   @Published var storageStatus = "Not checked"
-  @Published var storageNextAction = "Run Check after Goose has created the local database"
+  @Published var storageNextAction = "Run Check after Whoof has created the local database"
   @Published var schemaVersion = "Unknown"
 
   @Published var captureSessionID: String?
@@ -31,7 +31,7 @@ final class MoreDataStore: ObservableObject {
   @Published var selectedHealthFamilies: Set<String> = []
   @Published var healthAdapterStatus = "Not refreshed"
   @Published var healthAuthorizationStatus = "Not requested in More"
-  @Published var existingGooseRecordsStatus = "No local database checked"
+  @Published var existingWhoofRecordsStatus = "No local database checked"
   @Published var importedSleepHistoryStatus = "No imported sleep history loaded"
   @Published var healthSyncReports: [String] = ["No dry run yet"]
 
@@ -90,7 +90,7 @@ final class MoreDataStore: ObservableObject {
   @Published var logExportStatus = "Logs remain in the app event stream"
   @Published var deletionStatus = "Deletion bridge not wired"
 
-  let bridge = GooseRustBridge()
+  let bridge = WhoofRustBridge()
   let outputDirectory: String
 
   struct RawExportArtifactValidationResult {
@@ -126,7 +126,7 @@ final class MoreDataStore: ObservableObject {
     rawExportEnd = end
   }
 
-  func routeStatus(ble: GooseBLEClient, model: GooseAppModel) -> MoreRouteStatus {
+  func routeStatus(ble: WhoofBLEClient, model: WhoofAppModel) -> MoreRouteStatus {
     MoreRouteStatus(
       profile: OnboardingProfileSnapshot().hasRequiredDetails ? .ready : .pending,
       device: ble.connectionState == "ready" ? .ready : .pending,
@@ -144,7 +144,7 @@ final class MoreDataStore: ObservableObject {
     )
   }
 
-  func refreshBridgeStatus(model: GooseAppModel) {
+  func refreshBridgeStatus(model: WhoofAppModel) {
     coreVersionStatus = model.rustStatus
     guard schemaVersion == "Unknown" || coreVersionStatus == "Rust bridge not checked" else {
       return
@@ -152,7 +152,7 @@ final class MoreDataStore: ObservableObject {
     // core.version is a synchronous FFI round-trip; run it off-main so opening
     // the More tab does not block the UI, then apply the result on the main actor.
     DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-      let bridge = GooseRustBridge()
+      let bridge = WhoofRustBridge()
       let outcome: Result<[String: Any], Error>
       do {
         outcome = .success(try bridge.request(method: "core.version"))
@@ -190,7 +190,7 @@ final class MoreDataStore: ObservableObject {
     // capture.list_sessions reads SQLite over the FFI bridge; run it off-main so
     // the More tab opens without a freeze, then apply the result on the main actor.
     DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-      let bridge = GooseRustBridge()
+      let bridge = WhoofRustBridge()
       let outcome: Result<[String: Any], Error>
       do {
         outcome = .success(try bridge.request(
@@ -225,9 +225,9 @@ final class MoreDataStore: ObservableObject {
     return captureStatus
   }
 
-  func liveNotificationCaptureSummary(ble: GooseBLEClient) -> String {
+  func liveNotificationCaptureSummary(ble: WhoofBLEClient) -> String {
     if ble.connectionState == "ready" {
-      return "Ready; notifications are mirrored through GooseBLEClient.onNotification"
+      return "Ready; notifications are mirrored through WhoofBLEClient.onNotification"
     }
     if ble.isScanning {
       return "Scanning; capture starts after connection"
@@ -235,7 +235,7 @@ final class MoreDataStore: ObservableObject {
     return liveCaptureStatus
   }
 
-  func startCapture(ble: GooseBLEClient) {
+  func startCapture(ble: WhoofBLEClient) {
     guard captureSessionID == nil else {
       captureStatus = "Capture already active"
       return
@@ -331,7 +331,7 @@ final class MoreDataStore: ObservableObject {
     guard databaseExists else {
       storageStatus = "Unavailable; no database at path"
       storageNextAction = "Start capture or run another bridge flow that creates goose.sqlite"
-      existingGooseRecordsStatus = "No Goose records"
+      existingWhoofRecordsStatus = "No Whoof records"
       return
     }
 
@@ -348,7 +348,7 @@ final class MoreDataStore: ObservableObject {
       if let schema = value["schema_version"].map(Self.stringValue) {
         schemaVersion = schema
       }
-      existingGooseRecordsStatus = Self.recordCountSummary(value)
+      existingWhoofRecordsStatus = Self.recordCountSummary(value)
     } catch {
       storageStatus = "Check failed: \(Self.errorSummary(error))"
       storageNextAction = "Inspect the local database path and rerun Check"
@@ -400,7 +400,7 @@ final class MoreDataStore: ObservableObject {
   }
 
   func runAppleHealthDryRun() {
-    healthSyncReports = ["Apple Health metric sync disabled; Goose metrics must come from WHOOP packets or local estimates."]
+    healthSyncReports = ["Apple Health metric sync disabled; Whoof metrics must come from WHOOP packets or local estimates."]
   }
 
   func markHealthConnectUnavailable() {
@@ -507,7 +507,7 @@ final class MoreDataStore: ObservableObject {
 
     DispatchQueue.global(qos: .userInitiated).async {
       do {
-        let bridge = GooseRustBridge()
+        let bridge = WhoofRustBridge()
         let value = try bridge.request(method: "export.raw_timeframe", args: args)
         let bundlePath = Self.firstString(value, keys: ["bundle_path", "output_dir", "path"]) ?? self.outputDirectory
         let finishedZipPath = Self.firstString(value, keys: ["zip_output_path", "zip_path"]) ?? zipPath

@@ -225,7 +225,7 @@ final class SkippedNotificationDiagnostics {
   private var countsByReason: [String: Int] = [:]
   private let payloadHexByteLimit = 256
 
-  func record(_ event: GooseNotificationEvent) -> SkippedNotificationDiagnostic {
+  func record(_ event: WhoofNotificationEvent) -> SkippedNotificationDiagnostic {
     let reason = Self.frameSkipReason(value: event.value, deviceType: event.rustDeviceType)
     lock.lock()
     totalCount += 1

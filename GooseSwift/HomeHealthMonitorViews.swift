@@ -27,7 +27,7 @@ struct HomeCardioLoadSparkline: View {
           if let last = values.last {
             let lastPoint = chartPoint(index: values.count - 1, value: last, size: proxy.size)
             Circle()
-              .fill(GooseTheme.appBackground)
+              .fill(WhoofTheme.appBackground)
               .frame(width: 18, height: 18)
               .shadow(color: .black.opacity(0.12), radius: 5, x: 0, y: 2)
               .position(lastPoint)

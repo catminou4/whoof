@@ -4,13 +4,13 @@ import SwiftUI
 import WidgetKit
 
 @main
-struct GooseWorkoutLiveActivityBundle: WidgetBundle {
+struct WhoofWorkoutLiveActivityBundle: WidgetBundle {
   var body: some Widget {
-    GooseWorkoutLiveActivityWidget()
+    WhoofWorkoutLiveActivityWidget()
   }
 }
 
-struct GooseWorkoutLiveActivityWidget: Widget {
+struct WhoofWorkoutLiveActivityWidget: Widget {
   var body: some WidgetConfiguration {
     ActivityConfiguration(for: WorkoutLiveActivityAttributes.self) { context in
       WorkoutLiveActivityLockScreenView(context: context)

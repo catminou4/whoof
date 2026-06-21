@@ -9,7 +9,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     bridge::{BRIDGE_REQUEST_SCHEMA, BridgeError, BridgeRequest, handle_bridge_request},
     capture_import::{CaptureSqliteImportOptions, ensure_database_parent, import_capture_sqlite},
@@ -40,7 +40,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let mut database = resolve_validation_database(
         path_value(&args, "--database")?,
@@ -150,7 +150,7 @@ impl Drop for ResolvedValidationDatabase {
     }
 }
 
-fn raw_export_bundle_path_value(args: &[String]) -> goose_core::GooseResult<Option<PathBuf>> {
+fn raw_export_bundle_path_value(args: &[String]) -> whoof_core::GooseResult<Option<PathBuf>> {
     let raw_export_bundle = path_value(args, "--raw-export-bundle")?;
     let bundle = path_value(args, "--bundle")?;
     if raw_export_bundle.is_some() && bundle.is_some() {
@@ -164,7 +164,7 @@ fn raw_export_bundle_path_value(args: &[String]) -> goose_core::GooseResult<Opti
 fn resolve_validation_database(
     database_path: Option<PathBuf>,
     raw_export_bundle_path: Option<PathBuf>,
-) -> goose_core::GooseResult<ResolvedValidationDatabase> {
+) -> whoof_core::GooseResult<ResolvedValidationDatabase> {
     match (database_path, raw_export_bundle_path) {
         (Some(database_path), None) => Ok(ResolvedValidationDatabase {
             source: LocalHealthValidationDatabaseSource {
@@ -193,7 +193,7 @@ fn resolve_validation_database(
 
 fn resolve_raw_export_bundle_database(
     bundle_path: &Path,
-) -> goose_core::GooseResult<ResolvedValidationDatabase> {
+) -> whoof_core::GooseResult<ResolvedValidationDatabase> {
     if bundle_path.is_dir() {
         let database_path = bundle_path.join("data").join("goose.sqlite");
         if database_path.is_file() {
@@ -739,7 +739,7 @@ fn capture_session_sql_list(capture_session_ids: &[String]) -> String {
         .join(",")
 }
 
-fn sqlite_table_exists(connection: &Connection, table_name: &str) -> goose_core::GooseResult<bool> {
+fn sqlite_table_exists(connection: &Connection, table_name: &str) -> whoof_core::GooseResult<bool> {
     connection
         .query_row(
             "SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type='table' AND name=?1)",
@@ -795,7 +795,7 @@ fn audit_raw_export_zip_manifest(
 ) -> LocalHealthValidationRawExportManifestAudit {
     let prefix = raw_export_zip_entry_prefix(sqlite_archive_entry);
     let manifest_archive_entry = format!("{prefix}manifest.json");
-    let manifest_raw = (|| -> goose_core::GooseResult<String> {
+    let manifest_raw = (|| -> whoof_core::GooseResult<String> {
         let file = File::open(bundle_path).map_err(|source| GooseError::io(bundle_path, source))?;
         let mut archive = ZipArchive::new(file).map_err(|error| {
             GooseError::message(format!(
@@ -983,7 +983,7 @@ fn raw_export_zip_entry_prefix(sqlite_archive_entry: &str) -> String {
         .to_string()
 }
 
-fn file_sha256_hex(path: &Path) -> goose_core::GooseResult<String> {
+fn file_sha256_hex(path: &Path) -> whoof_core::GooseResult<String> {
     let bytes = fs::read(path).map_err(|source| GooseError::io(path, source))?;
     Ok(sha256_hex(&bytes))
 }
@@ -1001,7 +1001,7 @@ struct ExtractedRawExportSqlite {
 
 fn extract_raw_export_sqlite_from_zip(
     bundle_path: &Path,
-) -> goose_core::GooseResult<ExtractedRawExportSqlite> {
+) -> whoof_core::GooseResult<ExtractedRawExportSqlite> {
     let file = File::open(bundle_path).map_err(|source| GooseError::io(bundle_path, source))?;
     let mut archive = ZipArchive::new(file).map_err(|error| {
         GooseError::message(format!(
@@ -1528,13 +1528,13 @@ struct LocalHealthValidationNextAction {
     action: String,
 }
 
-fn read_manifest_value(path: &Path) -> goose_core::GooseResult<Value> {
+fn read_manifest_value(path: &Path) -> whoof_core::GooseResult<Value> {
     let raw = fs::read_to_string(path).map_err(|source| GooseError::io(path, source))?;
     serde_json::from_str(&raw)
         .map_err(|source| GooseError::message(format!("invalid validation manifest: {source}")))
 }
 
-fn parse_manifest(value: Value) -> goose_core::GooseResult<LocalHealthValidationManifest> {
+fn parse_manifest(value: Value) -> whoof_core::GooseResult<LocalHealthValidationManifest> {
     serde_json::from_value(value)
         .map_err(|source| GooseError::message(format!("invalid validation manifest: {source}")))
 }
@@ -1662,11 +1662,11 @@ fn run_manifest(
 fn write_markdown_report(
     report: &LocalHealthValidationSuiteReport,
     path: &Path,
-) -> goose_core::GooseResult<()> {
+) -> whoof_core::GooseResult<()> {
     write_markdown_text(&markdown_report(report), path)
 }
 
-fn write_json_file<T: Serialize>(report: &T, path: &Path) -> goose_core::GooseResult<()> {
+fn write_json_file<T: Serialize>(report: &T, path: &Path) -> whoof_core::GooseResult<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|source| GooseError::io(parent, source))?;
     }
@@ -1675,7 +1675,7 @@ fn write_json_file<T: Serialize>(report: &T, path: &Path) -> goose_core::GooseRe
     fs::write(path, json.as_bytes()).map_err(|source| GooseError::io(path, source))
 }
 
-fn write_markdown_text(markdown: &str, path: &Path) -> goose_core::GooseResult<()> {
+fn write_markdown_text(markdown: &str, path: &Path) -> whoof_core::GooseResult<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|source| GooseError::io(parent, source))?;
     }
@@ -5030,7 +5030,7 @@ fn scoped_database_path_for_case(
     database_path: &str,
     case: &LocalHealthValidationCase,
     evidence: &CaptureSessionEvidenceReadiness,
-) -> goose_core::GooseResult<Option<PathBuf>> {
+) -> whoof_core::GooseResult<Option<PathBuf>> {
     if evidence.expected_capture_session_ids.is_empty() {
         return Ok(None);
     }
@@ -5054,7 +5054,7 @@ fn copy_capture_session_scope(
     scoped_path: &Path,
     case: &LocalHealthValidationCase,
     expected_capture_session_ids: &[String],
-) -> goose_core::GooseResult<()> {
+) -> whoof_core::GooseResult<()> {
     let connection = Connection::open(scoped_path).map_err(|error| {
         GooseError::message(format!("cannot open scoped validation database: {error}"))
     })?;
@@ -5072,7 +5072,7 @@ fn copy_capture_session_scope(
         ))
         .map_err(|error| GooseError::message(format!("cannot attach source database: {error}")))?;
 
-    let copy_result = (|| -> goose_core::GooseResult<()> {
+    let copy_result = (|| -> whoof_core::GooseResult<()> {
         connection
             .execute_batch(&format!(
                 r#"
@@ -5130,7 +5130,7 @@ fn copy_capture_session_scope(
     copy_result.and(detach_result)
 }
 
-fn source_table_exists(connection: &Connection, table_name: &str) -> goose_core::GooseResult<bool> {
+fn source_table_exists(connection: &Connection, table_name: &str) -> whoof_core::GooseResult<bool> {
     connection
         .query_row(
             "SELECT EXISTS(SELECT 1 FROM source_db.sqlite_master WHERE type='table' AND name=?1)",
@@ -5144,7 +5144,7 @@ fn source_table_exists(connection: &Connection, table_name: &str) -> goose_core:
 fn persist_scoped_formatted_metric_writes(
     source_database_path: &str,
     scoped_path: &Path,
-) -> goose_core::GooseResult<usize> {
+) -> whoof_core::GooseResult<usize> {
     let connection = Connection::open(source_database_path).map_err(|error| {
         GooseError::message(format!(
             "cannot open validation database for metric copy: {error}"
@@ -5157,7 +5157,7 @@ fn persist_scoped_formatted_metric_writes(
         ))
         .map_err(|error| GooseError::message(format!("cannot attach scoped database: {error}")))?;
 
-    let copy_result = (|| -> goose_core::GooseResult<usize> {
+    let copy_result = (|| -> whoof_core::GooseResult<usize> {
         let mut changed = 0usize;
         for table in [
             "daily_activity_metrics",

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AppShellView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   @EnvironmentObject private var router: AppRouter
   @StateObject private var healthStore = HealthDataStore()
   @State private var homeHealthPath: [HealthRoute] = []
@@ -9,7 +9,7 @@ struct AppShellView: View {
 
   var body: some View {
     TabView(selection: tabSelection) {
-      ForEach(GooseAppTab.allCases) { tab in
+      ForEach(WhoofAppTab.allCases) { tab in
         tabNavigationStack(for: tab)
         .tabItem {
           Label(tab.title, systemImage: tab.systemImage)
@@ -19,7 +19,7 @@ struct AppShellView: View {
     }
   }
 
-  private var tabSelection: Binding<GooseAppTab> {
+  private var tabSelection: Binding<WhoofAppTab> {
     Binding {
       router.selectedTab
     } set: { newTab in
@@ -33,7 +33,7 @@ struct AppShellView: View {
   }
 
   @ViewBuilder
-  private func tabNavigationStack(for tab: GooseAppTab) -> some View {
+  private func tabNavigationStack(for tab: WhoofAppTab) -> some View {
     if tab == .home {
       NavigationStack(path: $homeHealthPath) {
         tabContent(for: tab)
@@ -57,7 +57,7 @@ struct AppShellView: View {
   }
 
   @ViewBuilder
-  private func tabContent(for tab: GooseAppTab) -> some View {
+  private func tabContent(for tab: WhoofAppTab) -> some View {
     switch tab {
     case .home:
       HomeDashboardView(
@@ -79,7 +79,7 @@ struct AppShellView: View {
   }
 }
 
-enum GooseAppTab: String, CaseIterable, Identifiable {
+enum WhoofAppTab: String, CaseIterable, Identifiable {
   case home
   case health
   case coach

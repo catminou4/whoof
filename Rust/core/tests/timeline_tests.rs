@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use goose_core::{
+use whoof_core::{
     capture_import::{CaptureImportOptions, import_fixture_index},
     debug_ws::{
         DEBUG_EVENT_TOPIC_ACTIVITY_CANDIDATE_CORRECTED,

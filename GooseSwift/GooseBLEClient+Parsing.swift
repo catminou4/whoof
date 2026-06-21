@@ -3,7 +3,7 @@ import Foundation
 import OSLog
 
 
-extension GooseBLEClient {
+extension WhoofBLEClient {
   func handleStandardHeartRate(
     _ value: Data,
     characteristic: CBCharacteristic,
@@ -641,7 +641,7 @@ extension GooseBLEClient {
     }
 
     onHistoricalRangeTelemetry?(
-      GooseHistoricalRangeTelemetry(
+      WhoofHistoricalRangeTelemetry(
         capturedAt: Date(),
         status: status,
         commandSequence: pending.sequence,
@@ -765,7 +765,7 @@ extension GooseBLEClient {
     writeType: CBCharacteristicWriteType
   ) {
     onCommandWrite?(
-      GooseCommandWriteEvent(
+      WhoofCommandWriteEvent(
         deviceID: peripheral.identifier,
         serviceUUID: characteristic.service?.uuid.uuidString ?? "unknown",
         characteristicUUID: characteristic.uuid.uuidString,

@@ -3,7 +3,7 @@ import Foundation
 import OSLog
 
 
-extension GooseBLEClient {
+extension WhoofBLEClient {
   func nextDebugSequence() -> UInt8 {
     let sequence = nextDebugCommandSequence
     nextDebugCommandSequence = nextDebugCommandSequence == 159 ? 120 : nextDebugCommandSequence + 1
@@ -69,7 +69,7 @@ extension GooseBLEClient {
     debugCommandTimeoutWorkItems[pending.sequence] = nil
     pendingDebugCommands[pending.sequence] = nil
     let completedAt = Date()
-    let response = GooseDebugCommandResponse(
+    let response = WhoofDebugCommandResponse(
       id: UUID(),
       commandID: pending.id,
       title: pending.title,
@@ -90,7 +90,7 @@ extension GooseBLEClient {
       debugCommandResponses.removeLast(debugCommandResponses.count - 50)
     }
     setDebugCommandStatus("\(pending.title) seq \(pending.sequence) \(status): \(result)")
-    let level: GooseLogLevel = status == "ok" ? .info : .warn
+    let level: WhoofLogLevel = status == "ok" ? .info : .warn
     record(
       level: level,
       source: "ble.debug_command",
@@ -138,21 +138,21 @@ extension GooseBLEClient {
     if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
       urls.append(
         documentsURL
-          .appendingPathComponent("GooseSwift", isDirectory: true)
+          .appendingPathComponent("WhoofSwift", isDirectory: true)
           .appendingPathComponent("debug-bt-commands.json")
       )
     }
     if let supportURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
       urls.append(
         supportURL
-          .appendingPathComponent("GooseSwift", isDirectory: true)
+          .appendingPathComponent("WhoofSwift", isDirectory: true)
           .appendingPathComponent("debug-bt-commands.json")
       )
     }
     return urls
   }
 
-  func debugCommandDefinitionPayload(_ command: GooseDebugCommandDefinition) -> [String: Any] {
+  func debugCommandDefinitionPayload(_ command: WhoofDebugCommandDefinition) -> [String: Any] {
     [
       "id": command.id,
       "title": command.title,
@@ -180,7 +180,7 @@ extension GooseBLEClient {
     ]
   }
 
-  func debugCommandResponsePayload(_ response: GooseDebugCommandResponse) -> [String: Any] {
+  func debugCommandResponsePayload(_ response: WhoofDebugCommandResponse) -> [String: Any] {
     [
       "id": response.id.uuidString,
       "command_id": response.commandID,

@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     algorithm_compare::{
         ALGORITHM_COMPARISON_SCHEMA, compare_hrv_goose_to_reference,
         compare_sleep_goose_to_external_reference_report, compare_sleep_goose_to_reference,

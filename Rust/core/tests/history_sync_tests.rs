@@ -1,6 +1,6 @@
 use std::{fs, path::Path};
 
-use goose_core::{
+use whoof_core::{
     capture_import::{CapturedFrameBatchOptions, CapturedFrameInput, import_captured_frame_batch},
     fixtures::build_fixture_index,
     historical_sync::{
@@ -119,7 +119,7 @@ fn physical_historical_sync_evidence_passes_when_capture_confirms_flow_and_times
             .provenance
             .get("report_integrity_policy")
             .and_then(serde_json::Value::as_str),
-        Some(goose_core::historical_sync::HISTORICAL_SYNC_PHYSICAL_REPORT_INTEGRITY_POLICY)
+        Some(whoof_core::historical_sync::HISTORICAL_SYNC_PHYSICAL_REPORT_INTEGRITY_POLICY)
     );
     assert!(report.issues.is_empty());
     assert!(report.next_actions.is_empty());
@@ -1268,9 +1268,9 @@ fn physical_raw_evidence_anchors() -> Vec<HistoricalSyncRawEvidenceAnchor> {
 }
 
 fn step<'a>(
-    report: &'a goose_core::historical_sync::HistoricalSyncDryRunReport,
+    report: &'a whoof_core::historical_sync::HistoricalSyncDryRunReport,
     kind: HistoricalSyncPlanStepKind,
-) -> &'a goose_core::historical_sync::HistoricalSyncPlanStep {
+) -> &'a whoof_core::historical_sync::HistoricalSyncPlanStep {
     report
         .steps
         .iter()

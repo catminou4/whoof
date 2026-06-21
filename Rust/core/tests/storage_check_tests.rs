@@ -1,6 +1,6 @@
 use rusqlite::Connection;
 
-use goose_core::{
+use whoof_core::{
     storage_check::{StorageCheckOptions, check_storage_database},
     store::known_tables,
 };

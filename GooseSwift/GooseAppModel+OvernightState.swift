@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-extension GooseAppModel {
+extension WhoofAppModel {
   func refreshOvernightPowerState(reason: String, record: Bool = false) -> OvernightPowerState {
     let power = Self.currentOvernightPowerState()
     applyOvernightPowerState(power)
@@ -29,7 +29,7 @@ extension GooseAppModel {
   }
 
   func updateOvernightGuardWarning() {
-    var warnings = ["Keep the official WHOOP app closed until Goose final sync/export finishes."]
+    var warnings = ["Keep the official WHOOP app closed until Whoof final sync/export finishes."]
     if let overnightGuardPowerWarning {
       warnings.append(overnightGuardPowerWarning)
     }
@@ -238,7 +238,7 @@ extension GooseAppModel {
 
     if snapshot.notificationCount == 0, elapsed >= Self.overnightGuardRawStaleWarningInterval {
       let minutes = Int((elapsed / 60).rounded())
-      let warning = "No raw BLE notifications after \(minutes)m; confirm WHOOP is connected and Goose is foregrounded if possible."
+      let warning = "No raw BLE notifications after \(minutes)m; confirm WHOOP is connected and Whoof is foregrounded if possible."
       warnings.append(warning)
       recordOvernightWatchdogWarningIfNeeded(
         title: "raw_notifications.none",

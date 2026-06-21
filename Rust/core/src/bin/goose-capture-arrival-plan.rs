@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     GooseError,
     bridge::{BRIDGE_REQUEST_SCHEMA, BridgeRequest, handle_bridge_request},
     report::write_json_report,
@@ -13,7 +13,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let database_path = path_value(&args, "--database")?
         .ok_or_else(|| GooseError::message("--database is required"))?;
@@ -66,7 +66,7 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn optional_usize(args: &[String], name: &str) -> goose_core::GooseResult<Option<usize>> {
+fn optional_usize(args: &[String], name: &str) -> whoof_core::GooseResult<Option<usize>> {
     Ok(value(args, name)?
         .map(|raw| {
             raw.parse::<usize>()

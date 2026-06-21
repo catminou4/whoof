@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     capture_import::{CaptureImportOptions, ensure_database_parent, import_fixture_index},
     fixtures::{build_fixture_index, load_fixture_index},
     report::write_json_report,
@@ -13,7 +13,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let fixtures = default_path(&args, "--fixtures", "fixtures")?;
     let db = default_path(&args, "--db", "goose.sqlite")?;

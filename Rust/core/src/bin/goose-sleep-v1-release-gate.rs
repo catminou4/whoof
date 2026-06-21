@@ -1,6 +1,6 @@
 use std::{fs, path::Path};
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     algorithm_compare::AlgorithmComparisonReport,
     historical_sync::HistoricalSyncPhysicalValidationReport,
@@ -19,7 +19,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let output = path_value(&args, "--output")?;
     let input_output = path_value(&args, "--input-output")?;
@@ -41,7 +41,7 @@ fn run() -> goose_core::GooseResult<()> {
 
 fn release_gate_input_from_report_paths(
     args: &[String],
-) -> goose_core::GooseResult<SleepV1ReleaseGateInput> {
+) -> whoof_core::GooseResult<SleepV1ReleaseGateInput> {
     let defaults = SleepV1ReleaseGateInput::default();
     let physical_historical_sync = optional_json::<HistoricalSyncPhysicalValidationReport>(
         args,
@@ -76,11 +76,11 @@ fn release_gate_input_from_report_paths(
 fn optional_json<T: serde::de::DeserializeOwned>(
     args: &[String],
     name: &str,
-) -> goose_core::GooseResult<Option<T>> {
+) -> whoof_core::GooseResult<Option<T>> {
     path_value(args, name)?.map_or(Ok(None), |path| read_json(&path).map(Some))
 }
 
-fn benchmark_reports(args: &[String]) -> goose_core::GooseResult<Vec<AlgorithmComparisonReport>> {
+fn benchmark_reports(args: &[String]) -> whoof_core::GooseResult<Vec<AlgorithmComparisonReport>> {
     let Some(raw_paths) = value(args, "--benchmark-comparison-reports")? else {
         return Ok(Vec::new());
     };
@@ -92,7 +92,7 @@ fn benchmark_reports(args: &[String]) -> goose_core::GooseResult<Vec<AlgorithmCo
         .collect()
 }
 
-fn optional_usize(args: &[String], name: &str) -> goose_core::GooseResult<Option<usize>> {
+fn optional_usize(args: &[String], name: &str) -> whoof_core::GooseResult<Option<usize>> {
     value(args, name)?.map_or(Ok(None), |raw| {
         raw.parse::<usize>()
             .map(Some)
@@ -100,7 +100,7 @@ fn optional_usize(args: &[String], name: &str) -> goose_core::GooseResult<Option
     })
 }
 
-fn read_json<T: serde::de::DeserializeOwned>(path: &Path) -> goose_core::GooseResult<T> {
+fn read_json<T: serde::de::DeserializeOwned>(path: &Path) -> whoof_core::GooseResult<T> {
     let raw = fs::read_to_string(path).map_err(|source| GooseError::io(path, source))?;
     serde_json::from_str(&raw).map_err(|source| GooseError::json(path, source))
 }

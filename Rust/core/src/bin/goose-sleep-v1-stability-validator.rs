@@ -1,6 +1,6 @@
 use std::{fs, path::Path};
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     metrics::SleepV1Input,
     report::write_json_report,
@@ -17,7 +17,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let Some(input_path) = path_value(&args, "--input")? else {
         return Err(GooseError::message(
@@ -56,7 +56,7 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn optional_f64(args: &[String], name: &str) -> goose_core::GooseResult<Option<f64>> {
+fn optional_f64(args: &[String], name: &str) -> whoof_core::GooseResult<Option<f64>> {
     value(args, name)?.map_or(Ok(None), |raw| {
         raw.parse::<f64>()
             .map(Some)
@@ -64,7 +64,7 @@ fn optional_f64(args: &[String], name: &str) -> goose_core::GooseResult<Option<f
     })
 }
 
-fn optional_usize(args: &[String], name: &str) -> goose_core::GooseResult<Option<usize>> {
+fn optional_usize(args: &[String], name: &str) -> whoof_core::GooseResult<Option<usize>> {
     value(args, name)?.map_or(Ok(None), |raw| {
         raw.parse::<usize>()
             .map(Some)
@@ -72,7 +72,7 @@ fn optional_usize(args: &[String], name: &str) -> goose_core::GooseResult<Option
     })
 }
 
-fn read_json<T: serde::de::DeserializeOwned>(path: &Path) -> goose_core::GooseResult<T> {
+fn read_json<T: serde::de::DeserializeOwned>(path: &Path) -> whoof_core::GooseResult<T> {
     let raw = fs::read_to_string(path).map_err(|source| GooseError::io(path, source))?;
     serde_json::from_str(&raw).map_err(|source| GooseError::json(path, source))
 }

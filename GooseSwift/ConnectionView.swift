@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ConnectionView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
 
   var body: some View {
     ConnectionContentView(ble: model.ble)
@@ -10,9 +10,9 @@ struct ConnectionView: View {
 }
 
 private struct ConnectionContentView: View {
-  @EnvironmentObject private var model: GooseAppModel
-  @EnvironmentObject private var messageStore: GooseMessageStore
-  @ObservedObject var ble: GooseBLEClient
+  @EnvironmentObject private var model: WhoofAppModel
+  @EnvironmentObject private var messageStore: WhoofMessageStore
+  @ObservedObject var ble: WhoofBLEClient
 
   var body: some View {
     List {
@@ -88,7 +88,7 @@ private struct ConnectionContentView: View {
       }
 
       Section("Client Hello") {
-        Text(GooseHello.clientHelloFrameHex)
+        Text(WhoofHello.clientHelloFrameHex)
           .font(.system(.footnote, design: .monospaced))
           .textSelection(.enabled)
       }

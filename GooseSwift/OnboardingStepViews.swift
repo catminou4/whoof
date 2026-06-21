@@ -41,7 +41,7 @@ struct OnboardingProfileStep: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 18) {
-      Text("These basics help Goose calculate your local metrics.")
+      Text("These basics help Whoof calculate your local metrics.")
         .font(.body)
         .foregroundStyle(.secondary)
 
@@ -193,7 +193,7 @@ struct OnboardingPermissionStep: View {
 }
 
 struct OnboardingConnectStep: View {
-  @ObservedObject var ble: GooseBLEClient
+  @ObservedObject var ble: WhoofBLEClient
 
   var body: some View {
     VStack(alignment: .leading, spacing: 18) {
@@ -274,13 +274,13 @@ struct OnboardingConnectStep: View {
 
   private var connectBody: String {
     if canVerify {
-      return "Finish setup to start using Goose with this strap."
+      return "Finish setup to start using Whoof with this strap."
     }
     if connected {
-      return "Keep the strap close while Goose confirms it can read data."
+      return "Keep the strap close while Whoof confirms it can read data."
     }
     if hasDiscoveredStraps {
-      return "Select the strap you want to use with Goose."
+      return "Select the strap you want to use with Whoof."
     }
     if searching {
       return "Keep Bluetooth on and keep the strap close to this phone."
@@ -345,7 +345,7 @@ struct OnboardingStandardActionBar: View {
 }
 
 struct OnboardingConnectActionBar: View {
-  @ObservedObject var ble: GooseBLEClient
+  @ObservedObject var ble: WhoofBLEClient
   let onBack: () -> Void
   let readyTitle: String
   let onComplete: () -> Void
@@ -573,7 +573,7 @@ struct OnboardingStateRow: View {
 }
 
 struct OnboardingDiscoveredStrapRow: View {
-  let device: GooseDiscoveredDevice
+  let device: WhoofDiscoveredDevice
   let selected: Bool
   let action: () -> Void
 

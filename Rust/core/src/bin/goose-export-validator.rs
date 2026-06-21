@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     export::validate_export_bundle,
     report::write_json_report,
     tool_args::{args, default_path, path_value},
@@ -11,7 +11,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let bundle = default_path(&args, "--bundle", "exports/latest")?;
     let output = path_value(&args, "--output")?;

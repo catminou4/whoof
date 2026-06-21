@@ -1,4 +1,4 @@
-use goose_core::activity_identity::{ActivityIdentityInput, activity_idempotency_key};
+use whoof_core::activity_identity::{ActivityIdentityInput, activity_idempotency_key};
 use serde_json::json;
 
 fn base_input() -> ActivityIdentityInput {

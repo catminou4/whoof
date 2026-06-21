@@ -1,13 +1,13 @@
 import SwiftUI
 
 @main
-struct GooseSwiftApp: App {
+struct WhoofSwiftApp: App {
   @Environment(\.scenePhase) private var scenePhase
-  @StateObject private var model = GooseAppModel()
+  @StateObject private var model = WhoofAppModel()
   @StateObject private var router = AppRouter()
 
   init() {
-    GooseTheme.configureAppearance()
+    WhoofTheme.configureAppearance()
   }
 
   var body: some Scene {

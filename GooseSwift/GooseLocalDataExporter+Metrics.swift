@@ -7,7 +7,7 @@ import UIKit
 import HealthKit
 #endif
 
-extension GooseLocalDataExporter {
+extension WhoofLocalDataExporter {
   static func bundleJSONStructureIssue(at url: URL) -> String? {
     guard let handle = try? FileHandle(forReadingFrom: url) else {
       return "could not open bundle for JSON validation"
@@ -103,7 +103,7 @@ extension GooseLocalDataExporter {
     return nil
   }
 
-  static func applyRawNotificationMetrics(from url: URL, to metrics: inout GooseOvernightExportMetrics) {
+  static func applyRawNotificationMetrics(from url: URL, to metrics: inout WhoofOvernightExportMetrics) {
     var previousDate: Date?
     if enumerateJSONLines(at: url, body: { object in
       guard let object else {
@@ -159,7 +159,7 @@ extension GooseLocalDataExporter {
     }
   }
 
-  static func applyHistoricalRangeMetrics(from url: URL, to metrics: inout GooseOvernightExportMetrics) {
+  static func applyHistoricalRangeMetrics(from url: URL, to metrics: inout WhoofOvernightExportMetrics) {
     if enumerateJSONLines(at: url, body: { object in
       guard let object else {
         metrics.historicalRangePollParseErrorCount += 1
@@ -195,7 +195,7 @@ extension GooseLocalDataExporter {
     }
   }
 
-  static func applyCommandWriteMetrics(from url: URL, to metrics: inout GooseOvernightExportMetrics) {
+  static func applyCommandWriteMetrics(from url: URL, to metrics: inout WhoofOvernightExportMetrics) {
     if enumerateJSONLines(at: url, body: { object in
       guard let object else {
         metrics.commandWriteParseErrorCount += 1
@@ -228,7 +228,7 @@ extension GooseLocalDataExporter {
     }
   }
 
-  static func applyEventLogMetrics(from url: URL, to metrics: inout GooseOvernightExportMetrics) {
+  static func applyEventLogMetrics(from url: URL, to metrics: inout WhoofOvernightExportMetrics) {
     if enumerateJSONLines(at: url, body: { object in
       guard object != nil else {
         metrics.overnightEventLogParseErrorCount += 1
@@ -243,11 +243,11 @@ extension GooseLocalDataExporter {
   static func applySQLiteMirrorMetrics(
     databasePath: String,
     sessionID: String,
-    to metrics: inout GooseOvernightExportMetrics,
+    to metrics: inout WhoofOvernightExportMetrics,
     issues: inout [String]
   ) {
     do {
-      let report = try GooseRustBridge().request(
+      let report = try WhoofRustBridge().request(
         method: "overnight.mirror_counts",
         args: [
           "database_path": databasePath,
@@ -278,7 +278,7 @@ extension GooseLocalDataExporter {
   static func validateOvernightStatusFile(
     from url: URL,
     expectedSessionID: String,
-    to metrics: inout GooseOvernightExportMetrics,
+    to metrics: inout WhoofOvernightExportMetrics,
     sessionMatches: inout Bool,
     finalized: inout Bool,
     issues: inout [String]
@@ -340,7 +340,7 @@ extension GooseLocalDataExporter {
   static func validateCrashMarker(
     from url: URL,
     expectedSessionID: String,
-    to metrics: inout GooseOvernightExportMetrics,
+    to metrics: inout WhoofOvernightExportMetrics,
     jsonValid: inout Bool,
     sessionMatches: inout Bool,
     finalized: inout Bool,
@@ -405,7 +405,7 @@ extension GooseLocalDataExporter {
   static func applyManifestMetrics(
     from url: URL,
     expectedSessionID: String,
-    to metrics: inout GooseOvernightExportMetrics,
+    to metrics: inout WhoofOvernightExportMetrics,
     sessionMatches: inout Bool,
     finalized: inout Bool,
     issues: inout [String]
@@ -485,7 +485,7 @@ extension GooseLocalDataExporter {
     source: String,
     key: String,
     value: Any?,
-    to metrics: inout GooseOvernightExportMetrics,
+    to metrics: inout WhoofOvernightExportMetrics,
     issues: inout [String]
   ) {
     guard let text = proofSidecarWarningText(value) else {

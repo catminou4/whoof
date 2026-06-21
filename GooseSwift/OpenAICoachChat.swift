@@ -133,7 +133,7 @@ final class OpenAICoachChatModel: ObservableObject {
   func send(
     _ prompt: String,
     healthStore: HealthDataStore,
-    appModel: GooseAppModel
+    appModel: WhoofAppModel
   ) {
     let trimmedPrompt = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !trimmedPrompt.isEmpty, !streamState.isStreaming else {
@@ -191,7 +191,7 @@ final class OpenAICoachChatModel: ObservableObject {
     auth: CodexStoredChatGPTAuth,
     assistantID: UUID,
     healthStore: HealthDataStore,
-    appModel: GooseAppModel
+    appModel: WhoofAppModel
   ) async throws {
     let activeAuth = try await authClient.storedAuth(refreshIfNeeded: true) ?? auth
     self.auth = activeAuth
@@ -376,7 +376,7 @@ final class OpenAICoachChatModel: ObservableObject {
   private func execute(
     call: OpenAICoachToolCall,
     healthStore: HealthDataStore,
-    appModel: GooseAppModel
+    appModel: WhoofAppModel
   ) -> String {
     let payload = CoachLocalToolContext.build(healthStore: healthStore, appModel: appModel)
     let tools = payload["tools"] as? [String: Any] ?? [:]

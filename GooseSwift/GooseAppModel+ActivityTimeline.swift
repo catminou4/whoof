@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-extension GooseAppModel {
+extension WhoofAppModel {
   func intString(_ value: Any?) -> String {
     intValue(value).map(String.init) ?? "?"
   }
@@ -107,7 +107,7 @@ extension GooseAppModel {
     rustStartupQueue.async { [weak self] in
       let result: Result<Int, Error>
       do {
-        let rust = GooseRustBridge()
+        let rust = WhoofRustBridge()
         let report = try rust.request(
           method: "capture.list_sessions",
           args: [
@@ -351,7 +351,7 @@ extension GooseAppModel {
   nonisolated static func activityTimelineMetricsByName(
     sessionID: String,
     databasePath: String,
-    rust: GooseRustBridge
+    rust: WhoofRustBridge
   ) throws -> [String: [String: Any]] {
     let report = try rust.request(
       method: "activity.list_metrics",
@@ -674,7 +674,7 @@ extension GooseAppModel {
     let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
       ?? FileManager.default.temporaryDirectory
     return documents
-      .appendingPathComponent("GooseSwift", isDirectory: true)
+      .appendingPathComponent("WhoofSwift", isDirectory: true)
       .appendingPathComponent("OvernightGuard", isDirectory: true)
   }
 

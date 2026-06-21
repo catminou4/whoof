@@ -3,7 +3,7 @@ import Foundation
 import OSLog
 
 
-extension GooseBLEClient {
+extension WhoofBLEClient {
   func requestBluetooth() {
     record(source: "ui", title: "request_bluetooth")
     ensureCentral()
@@ -144,7 +144,7 @@ extension GooseBLEClient {
     record(source: "ble", title: "scan.stopped", body: "reason=\(reason)")
   }
 
-  func select(_ device: GooseDiscoveredDevice) {
+  func select(_ device: WhoofDiscoveredDevice) {
     selectedDeviceID = device.id
     record(source: "ui", title: "device.selected", body: "\(device.name) \(device.id.uuidString)")
   }
@@ -184,7 +184,7 @@ extension GooseBLEClient {
     guard
       let activePeripheral,
       let commandCharacteristic,
-      !GooseHello.clientHelloFrame.isEmpty
+      !WhoofHello.clientHelloFrame.isEmpty
     else {
       updateConnectionState("hello blocked")
       record(level: .warn, source: "ble", title: "hello.blocked", body: "missing active peripheral or command characteristic")
@@ -203,7 +203,7 @@ extension GooseBLEClient {
     }
 
     activePeripheral.writeValue(
-      GooseHello.clientHelloFrame,
+      WhoofHello.clientHelloFrame,
       for: commandCharacteristic,
       type: writeType
     )
@@ -213,7 +213,7 @@ extension GooseBLEClient {
       commandNumber: nil,
       sequence: nil,
       payload: Data(),
-      frame: GooseHello.clientHelloFrame,
+      frame: WhoofHello.clientHelloFrame,
       peripheral: activePeripheral,
       characteristic: commandCharacteristic,
       writeType: writeType
@@ -222,7 +222,7 @@ extension GooseBLEClient {
     record(
       source: "ble",
       title: "hello.sent",
-      body: "reason=\(reason) \(commandCharacteristic.uuid.uuidString) \(writeTypeName(writeType)) \(GooseHello.clientHelloFrameHex)"
+      body: "reason=\(reason) \(commandCharacteristic.uuid.uuidString) \(writeTypeName(writeType)) \(WhoofHello.clientHelloFrameHex)"
     )
   }
 

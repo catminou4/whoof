@@ -44,7 +44,7 @@ struct CaptureFrameWriteResult {
   let issues: [String]
   let nextActions: [String]
   let errorDescription: String?
-  let bridgeTiming: GooseRustBridgeTiming?
+  let bridgeTiming: WhoofRustBridgeTiming?
   let importTimingSummary: String?
 }
 
@@ -77,7 +77,7 @@ struct CapturedFrameWriteRow {
 final class CaptureFrameEnqueueAggregator {
   var onSnapshot: ((CaptureFrameEnqueueSnapshot) -> Void)?
 
-  private let queue = DispatchQueue(label: "com.goose.swift.capture-frame-enqueue", qos: .utility)
+  private let queue = DispatchQueue(label: "com.whoof.swift.capture-frame-enqueue", qos: .utility)
   private let publishInterval: TimeInterval
   private var pendingSnapshot: CaptureFrameEnqueueSnapshot?
   private var publishScheduled = false
@@ -178,9 +178,9 @@ final class CaptureFrameEnqueueAggregator {
 }
 
 final class CaptureFrameWriteQueue: @unchecked Sendable {
-  private let writeQueue = DispatchQueue(label: "com.goose.swift.capture-frame-writes", qos: .utility)
+  private let writeQueue = DispatchQueue(label: "com.whoof.swift.capture-frame-writes", qos: .utility)
   private let stateLock = NSLock()
-  private let rust = GooseRustBridge()
+  private let rust = WhoofRustBridge()
   private let databasePath: String
   private let maxQueuedRows: Int
   private let maxBatchRows: Int

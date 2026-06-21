@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     debug_ws::{
         DEBUG_COMMAND_SCHEMA, DEBUG_EVENT_TOPIC_ACTIVITY_CANDIDATE_CORRECTED,
         DEBUG_EVENT_TOPIC_ACTIVITY_CANDIDATE_CREATED,
@@ -481,7 +481,7 @@ fn debug_session_store_records_structured_activity_export_and_health_sync_events
     .unwrap();
 
     let snapshot =
-        goose_core::debug_ws::debug_session_snapshot(&store, "debug-session-structured").unwrap();
+        whoof_core::debug_ws::debug_session_snapshot(&store, "debug-session-structured").unwrap();
 
     assert!(
         snapshot.contract_report.pass,

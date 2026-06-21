@@ -3,7 +3,7 @@ import Foundation
 import OSLog
 
 
-extension GooseBLEClient {
+extension WhoofBLEClient {
   func ensureCentral() {
     if central == nil {
       record(source: "ble", title: "central.create")
@@ -83,7 +83,7 @@ extension GooseBLEClient {
     }
   }
 
-  func writeOSLog(_ message: GooseMessage) {
+  func writeOSLog(_ message: WhoofMessage) {
     let line = "\(message.source) \(message.title) \(message.body)"
     switch message.level {
     case .debug:
@@ -126,9 +126,9 @@ extension GooseBLEClient {
     notificationContextLock.unlock()
   }
 
-  func notificationContextSnapshot() -> GooseBLENotificationContext {
+  func notificationContextSnapshot() -> WhoofBLENotificationContext {
     notificationContextLock.lock()
-    let snapshot = GooseBLENotificationContext(
+    let snapshot = WhoofBLENotificationContext(
       activeDeviceName: notificationContextActiveDeviceName,
       connectionState: notificationContextConnectionState
     )
@@ -146,7 +146,7 @@ extension GooseBLEClient {
 
   /// Which WHOOP strap generation a command characteristic belongs to. Gen4
   /// ("Harvard", WHOOP 4.0) uses the `61080002` characteristic; all Gen5 straps
-  /// (Maverick/Puffin/Goose, WHOOP 5.0) use `fd4b0002`.
+  /// (Maverick/Puffin/Whoof, WHOOP 5.0) use `fd4b0002`.
   enum CommandGeneration {
     case gen4
     case gen5

@@ -1,6 +1,6 @@
 use std::{fs, path::Path};
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     report::write_json_report,
     tool_args::{args, default_path, path_value},
@@ -14,7 +14,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let input_path = default_path(&args, "--input", "../apk-ui-inventory/coverage-map.json")?;
     let output = path_value(&args, "--output")?;

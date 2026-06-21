@@ -2,7 +2,7 @@ import CoreBluetooth
 import Foundation
 import OSLog
 
-extension GooseBLEClient: CBPeripheralDelegate {
+extension WhoofBLEClient: CBPeripheralDelegate {
   func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
     if dispatchCoreBluetoothDelegateToMainIfNeeded({ [weak self] in
       self?.peripheral(peripheral, didDiscoverServices: error)
@@ -197,8 +197,8 @@ extension GooseBLEClient: CBPeripheralDelegate {
     characteristic: CBCharacteristic,
     value: Data,
     capturedAt: Date
-  ) -> GooseNotificationEvent {
-    GooseNotificationEvent(
+  ) -> WhoofNotificationEvent {
+    WhoofNotificationEvent(
       deviceID: peripheral.identifier,
       serviceUUID: characteristic.service?.uuid.uuidString ?? "",
       characteristicUUID: characteristic.uuid.uuidString,
@@ -207,12 +207,12 @@ extension GooseBLEClient: CBPeripheralDelegate {
     )
   }
 
-  func fanOutNotification(_ event: GooseNotificationEvent) {
+  func fanOutNotification(_ event: WhoofNotificationEvent) {
     fanOutRawNotification(event)
     onNotification?(event)
   }
 
-  func fanOutRawNotification(_ event: GooseNotificationEvent) {
+  func fanOutRawNotification(_ event: WhoofNotificationEvent) {
     if let onRawNotificationWithContext {
       onRawNotificationWithContext(event, notificationContextSnapshot())
     } else {

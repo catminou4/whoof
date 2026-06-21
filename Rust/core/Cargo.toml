@@ -1,5 +1,5 @@
 [package]
-name = "goose-core"
+name = "whoof-core"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.94"
@@ -7,7 +7,7 @@ description = "Rust protocol, evidence, validation, and local calculation core f
 license = "UNLICENSED"
 
 [lib]
-name = "goose_core"
+name = "whoof_core"
 path = "src/lib.rs"
 crate-type = ["rlib", "staticlib", "cdylib"]
 

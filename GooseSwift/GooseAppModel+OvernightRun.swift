@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-extension GooseAppModel {
+extension WhoofAppModel {
   func startOvernightGuard() {
     ble.record(source: "overnight.guard", title: "start.requested")
     guard !overnightGuardActive else {
@@ -184,7 +184,7 @@ extension GooseAppModel {
   }
 
   nonisolated func persistOvernightRawNotificationBeforeInterpretation(
-    _ event: GooseNotificationEvent,
+    _ event: WhoofNotificationEvent,
     activeDeviceName: String,
     connectionState: String
   ) {
@@ -215,7 +215,7 @@ extension GooseAppModel {
     }
   }
 
-  nonisolated func persistOvernightHistoricalRangeTelemetry(_ telemetry: GooseHistoricalRangeTelemetry) {
+  nonisolated func persistOvernightHistoricalRangeTelemetry(_ telemetry: WhoofHistoricalRangeTelemetry) {
     guard overnightRawSpool.isActive else {
       return
     }
@@ -237,7 +237,7 @@ extension GooseAppModel {
   }
 
   nonisolated func persistOvernightCommandWrite(
-    _ event: GooseCommandWriteEvent,
+    _ event: WhoofCommandWriteEvent,
     activeDeviceName: String,
     connectionState: String
   ) {
@@ -254,7 +254,7 @@ extension GooseAppModel {
     }
   }
 
-  nonisolated func persistOvernightEventLog(_ message: GooseMessage) {
+  nonisolated func persistOvernightEventLog(_ message: WhoofMessage) {
     guard overnightRawSpool.isActive else {
       return
     }
@@ -287,7 +287,7 @@ extension GooseAppModel {
     snapshot.eventLogCount <= 1 || snapshot.eventLogCount.isMultiple(of: 20) || snapshot.lastError != nil
   }
 
-  func applyOvernightRawNotificationSnapshot(_ snapshot: OvernightRawSpoolSnapshot, event: GooseNotificationEvent) {
+  func applyOvernightRawNotificationSnapshot(_ snapshot: OvernightRawSpoolSnapshot, event: WhoofNotificationEvent) {
     guard overnightGuardActive else {
       return
     }
@@ -313,7 +313,7 @@ extension GooseAppModel {
 
   func applyOvernightHistoricalRangeTelemetrySnapshot(
     _ snapshot: OvernightRawSpoolSnapshot,
-    telemetry: GooseHistoricalRangeTelemetry
+    telemetry: WhoofHistoricalRangeTelemetry
   ) {
     guard overnightGuardActive else {
       return
@@ -337,7 +337,7 @@ extension GooseAppModel {
     writeOvernightGuardStatus(reason: "range_telemetry_\(telemetry.status)")
   }
 
-  func applyOvernightCommandWriteSnapshot(_ snapshot: OvernightRawSpoolSnapshot, event: GooseCommandWriteEvent) {
+  func applyOvernightCommandWriteSnapshot(_ snapshot: OvernightRawSpoolSnapshot, event: WhoofCommandWriteEvent) {
     guard overnightGuardActive else {
       return
     }
@@ -417,7 +417,7 @@ extension GooseAppModel {
     scheduleOvernightGuardRangePoll(reason: "periodic")
   }
 
-  func handleOvernightHistoricalSyncProgress(_ progress: GooseHistoricalSyncProgress) {
+  func handleOvernightHistoricalSyncProgress(_ progress: WhoofHistoricalSyncProgress) {
     guard overnightGuardActive else {
       return
     }
@@ -451,7 +451,7 @@ extension GooseAppModel {
     }
   }
 
-  func scheduleOvernightGuardFinalSyncDrain(reason: String, progress: GooseHistoricalSyncProgress) {
+  func scheduleOvernightGuardFinalSyncDrain(reason: String, progress: WhoofHistoricalSyncProgress) {
     guard overnightGuardActive else {
       return
     }
@@ -573,7 +573,7 @@ extension GooseAppModel {
     DispatchQueue.global(qos: .userInitiated).async { [weak self] in
       do {
         let mirrorSnapshot = self?.overnightSQLiteMirror.flushSynchronously()
-        let result = try GooseLocalDataExporter.createBundle(requiredOvernightSessionID: sessionID)
+        let result = try WhoofLocalDataExporter.createBundle(requiredOvernightSessionID: sessionID)
         DispatchQueue.main.async { [weak self] in
           guard let self else {
             return
@@ -591,7 +591,7 @@ extension GooseAppModel {
           self.overnightGuardExportStatus = "Saved \(result.fileCount) files, \(byteText)\(result.manifestStatusSuffix) | \(validationText): \(result.validation.summary)"
           self.refreshOvernightReadiness(reason: "final_export_finished", record: true)
           let statusReason: String
-          let recordLevel: GooseLogLevel
+          let recordLevel: WhoofLogLevel
           let recordTitle: String
           if !result.validation.passed {
             statusReason = "final_export_validation_failed"

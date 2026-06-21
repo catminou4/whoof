@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     calibration::{
         CalibrationApplicationInput, CalibrationDataset, CalibrationOptions, apply_calibration,
         calibration_run_record, evaluate_linear_calibration,
@@ -265,7 +265,7 @@ fn apply_calibration_clamps_to_score_range_and_flags_it() {
 
 #[test]
 fn apply_calibration_rejects_failed_or_mismatched_calibration_runs() {
-    let failed_record = goose_core::store::CalibrationRunRecord {
+    let failed_record = whoof_core::store::CalibrationRunRecord {
         calibration_run_id: "failed-calibration".to_string(),
         algorithm_id: "goose.sleep.v0".to_string(),
         version: "0.1.0".to_string(),

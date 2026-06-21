@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     export::{RawExportFilters, RawExportOptions, export_raw_timeframe},
     report::write_json_report,
     store::GooseStore,
@@ -12,7 +12,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let db = default_path(&args, "--db", "goose.sqlite")?;
     let output_dir = default_path(&args, "--output-dir", "exports/latest.goosebundle")?;
@@ -69,7 +69,7 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn csv_values(args: &[String], key: &str) -> goose_core::GooseResult<Vec<String>> {
+fn csv_values(args: &[String], key: &str) -> whoof_core::GooseResult<Vec<String>> {
     Ok(value(args, key)?
         .map(|values| {
             values

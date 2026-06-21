@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-extension GooseAppModel {
+extension WhoofAppModel {
   func recordHealthPacketCaptureFamily(_ family: HealthPacketCaptureFamily, capturedAt: Date) {
     guard activeHealthPacketCapture != nil else {
       return
@@ -576,7 +576,7 @@ extension GooseAppModel {
   }
 
   func recordRustBridgeTiming(
-    _ timing: GooseRustBridgeTiming,
+    _ timing: WhoofRustBridgeTiming,
     frameCount: Int,
     queueDepth: Int,
     queueHighWatermark: Int,

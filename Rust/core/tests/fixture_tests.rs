@@ -1,23 +1,23 @@
 use std::{collections::BTreeMap, fs, path::Path};
 
-use goose_core::activity_candidates::{
+use whoof_core::activity_candidates::{
     ACTIVITY_CANDIDATE_CLASSIFIER_INPUT_SCHEMA, ACTIVITY_CANDIDATE_CLASSIFIER_REPORT_SCHEMA,
     ActivityCandidateClassifierInput, ActivityCandidateState, run_activity_candidate_classifier,
 };
-use goose_core::fixtures::{
+use whoof_core::fixtures::{
     ACTIVITY_SESSION_FIXTURE_SCHEMA, CAPTURED_FRAME_BATCH_SCHEMA,
     COMMAND_VALIDATION_FIXTURE_SCHEMA, FRAME_HEX_SCHEMA, OPENWHOOP_REFERENCE_FIXTURE_SCHEMA,
     PAYLOAD_HEX_SCHEMA, build_fixture_index, run_parser_fixtures,
 };
-use goose_core::health_sync::{
+use whoof_core::health_sync::{
     ActivityHealthSyncDryRunInput, HealthPlatform, run_activity_health_sync_dry_run,
 };
-use goose_core::historical_sync::{
+use whoof_core::historical_sync::{
     HistoricalSyncAckDisposition, HistoricalSyncDryRunInput, HistoricalSyncFakeEvent,
     HistoricalSyncGeneration, HistoricalSyncPayloadExpectation, HistoricalSyncPlanStep,
     HistoricalSyncPlanStepKind, HistoricalSyncState, run_historical_sync_dry_run,
 };
-use goose_core::openwhoop_reference::{
+use whoof_core::openwhoop_reference::{
     OPENWHOOP_REFERENCE_COMMIT, OPENWHOOP_REFERENCE_LICENSE_CAVEAT, WhoopGeneration,
     whoop_generation_from_service_uuid, whoop_generation_reference,
 };
@@ -754,7 +754,7 @@ fn indexes_openwhoop_gen5_history_plan_fixture_with_command_planning() {
         .unwrap();
     assert_eq!(
         fixture.schema,
-        goose_core::historical_sync::HISTORICAL_SYNC_DRY_RUN_SCHEMA
+        whoof_core::historical_sync::HISTORICAL_SYNC_DRY_RUN_SCHEMA
     );
     assert_eq!(fixture.kind, "synthetic");
     assert!(fixture.source.contains(OPENWHOOP_REFERENCE_COMMIT));
@@ -887,7 +887,7 @@ fn indexes_openwhoop_gen5_history_metadata_markers_fixture_with_normalized_marke
         .unwrap();
     assert_eq!(
         fixture.schema,
-        goose_core::historical_sync::HISTORICAL_SYNC_DRY_RUN_SCHEMA
+        whoof_core::historical_sync::HISTORICAL_SYNC_DRY_RUN_SCHEMA
     );
     assert_eq!(fixture.kind, "synthetic");
     assert!(fixture.source.contains(OPENWHOOP_REFERENCE_COMMIT));
@@ -1348,7 +1348,7 @@ fn assert_provenance_shape(provenance: &serde_json::Value, session_kind: &str) {
 }
 
 fn planned_activity_session_subset(
-    session: &goose_core::health_sync::PlannedActivityHealthWrite,
+    session: &whoof_core::health_sync::PlannedActivityHealthWrite,
 ) -> serde_json::Value {
     json!({
         "session_id": &session.session_id,
@@ -1381,7 +1381,7 @@ struct OpenWhoopUuidProbe {
 }
 
 fn historical_sync_step(
-    report: &goose_core::historical_sync::HistoricalSyncDryRunReport,
+    report: &whoof_core::historical_sync::HistoricalSyncDryRunReport,
     kind: HistoricalSyncPlanStepKind,
 ) -> &HistoricalSyncPlanStep {
     report

@@ -5,7 +5,7 @@ import UIKit
 
 extension HealthDataStore {
   nonisolated static func packetInputBridgeReports(databasePath: String) -> Result<[String: [String: Any]], Error> {
-    let bridge = GooseRustBridge()
+    let bridge = WhoofRustBridge()
     let baseArgs: [String: Any] = [
       "database_path": databasePath,
       "start": "0000",

@@ -40,7 +40,7 @@ final class PacketUIStateAggregator {
 
   var onSnapshot: ((PacketUIStateSnapshot) -> Void)?
 
-  private let queue = DispatchQueue(label: "com.goose.swift.packet-ui-state", qos: .utility)
+  private let queue = DispatchQueue(label: "com.whoof.swift.packet-ui-state", qos: .utility)
   private let publishInterval: TimeInterval
   private let maximumPendingDeviceSignalPoints: Int
   private var publishScheduled = false

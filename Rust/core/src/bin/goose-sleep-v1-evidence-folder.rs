@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     report::write_json_report,
     sleep_validation::{
         SleepV1EvidenceFolderOptions, validate_sleep_v1_evidence_folder_with_options,
@@ -13,7 +13,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let Some(evidence_dir) = path_value(&args, "--evidence-dir")? else {
         eprintln!("provide --evidence-dir <sleep-v1-validation-folder>");

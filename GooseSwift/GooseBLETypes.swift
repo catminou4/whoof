@@ -2,29 +2,29 @@ import CoreBluetooth
 import Foundation
 import OSLog
 
-enum GooseLogLevel: String {
+enum WhoofLogLevel: String {
   case debug
   case info
   case warn
   case error
 }
 
-struct GooseDiscoveredDevice: Identifiable, Equatable {
+struct WhoofDiscoveredDevice: Identifiable, Equatable {
   let id: UUID
   let name: String
   let rssi: Int
 }
 
-struct GooseMessage: Identifiable {
+struct WhoofMessage: Identifiable {
   let id = UUID()
   let timestamp: Date
-  let level: GooseLogLevel
+  let level: WhoofLogLevel
   let source: String
   let title: String
   let body: String
 }
 
-struct GooseNotificationEvent {
+struct WhoofNotificationEvent {
   let deviceID: UUID
   let serviceUUID: String
   let characteristicUUID: String
@@ -36,12 +36,12 @@ struct GooseNotificationEvent {
   }
 }
 
-struct GooseBLENotificationContext {
+struct WhoofBLENotificationContext {
   let activeDeviceName: String
   let connectionState: String
 }
 
-struct GooseCommandWriteEvent {
+struct WhoofCommandWriteEvent {
   let deviceID: UUID
   let serviceUUID: String
   let characteristicUUID: String
@@ -55,20 +55,20 @@ struct GooseCommandWriteEvent {
   let capturedAt: Date
 }
 
-enum GooseSyncToastPhase: String {
+enum WhoofSyncToastPhase: String {
   case syncing
   case synced
   case failed
 }
 
-struct GooseSyncToast: Identifiable, Equatable {
+struct WhoofSyncToast: Identifiable, Equatable {
   let id = UUID()
-  let phase: GooseSyncToastPhase
+  let phase: WhoofSyncToastPhase
   let title: String
   let detail: String
 }
 
-struct GooseHistoricalSyncProgress {
+struct WhoofHistoricalSyncProgress {
   let status: String
   let detail: String
   let packetCount: Int
@@ -77,7 +77,7 @@ struct GooseHistoricalSyncProgress {
   let capturedAt: Date
 }
 
-struct GooseHistoricalRangeTelemetry {
+struct WhoofHistoricalRangeTelemetry {
   let capturedAt: Date
   let status: String
   let commandSequence: UInt8
@@ -96,14 +96,14 @@ struct GooseHistoricalRangeTelemetry {
   let notes: String
 }
 
-struct GooseSyncFailure: Identifiable, Equatable {
+struct WhoofSyncFailure: Identifiable, Equatable {
   let id = UUID()
   let title: String
   let message: String
   let occurredAt: Date
 }
 
-struct GooseDebugCommandDefinition: Identifiable, Equatable {
+struct WhoofDebugCommandDefinition: Identifiable, Equatable {
   let id: String
   let title: String
   let commandNumber: UInt8
@@ -126,7 +126,7 @@ struct GooseDebugCommandDefinition: Identifiable, Equatable {
   }
 }
 
-struct GooseDebugCommandResponse: Identifiable, Equatable {
+struct WhoofDebugCommandResponse: Identifiable, Equatable {
   let id: UUID
   let commandID: String
   let title: String

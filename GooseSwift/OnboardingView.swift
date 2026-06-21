@@ -6,7 +6,7 @@ import UIKit
 import UserNotifications
 
 struct OnboardingView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   let onComplete: () -> Void
   @StateObject private var locationPermissionRequester = OnboardingLocationPermissionRequester()
 
@@ -54,7 +54,7 @@ struct OnboardingView: View {
     }
     .background {
       ZStack {
-        GooseTheme.appBackground
+        WhoofTheme.appBackground
           .ignoresSafeArea()
           .onTapGesture {
             focusedField = nil
@@ -115,7 +115,7 @@ struct OnboardingView: View {
       OnboardingPermissionStep(
         systemImage: "heart.fill",
         title: "HealthKit",
-        bodyText: "Goose uses HealthKit only to prefill profile values.",
+        bodyText: "Whoof uses HealthKit only to prefill profile values.",
         details: [
           "Body weight to prefill your profile",
           "No steps, calories, workouts, sleep, or recovery metrics imported",
@@ -129,10 +129,10 @@ struct OnboardingView: View {
       OnboardingPermissionStep(
         systemImage: "location.fill",
         title: "Location",
-        bodyText: "Goose uses location to track outdoor workouts, routes, pace, and distance while an activity is running.",
+        bodyText: "Whoof uses location to track outdoor workouts, routes, pace, and distance while an activity is running.",
         details: [
-          "Active workout GPS while Goose is open",
-          "Background route tracking when you minimize Goose",
+          "Active workout GPS while Whoof is open",
+          "Background route tracking when you minimize Whoof",
           "Distance, pace, elevation, and route points",
         ],
         buttonTitle: "Enable Location",
@@ -144,7 +144,7 @@ struct OnboardingView: View {
       OnboardingPermissionStep(
         systemImage: "bluetooth",
         title: "Bluetooth",
-        bodyText: "Goose needs Bluetooth to find your owned WHOOP strap and keep the local connection live.",
+        bodyText: "Whoof needs Bluetooth to find your owned WHOOP strap and keep the local connection live.",
         details: [
           "Scan for nearby WHOOP services",
           "Connect to the selected strap",
@@ -159,7 +159,7 @@ struct OnboardingView: View {
       OnboardingPermissionStep(
         systemImage: "bell.badge.fill",
         title: "Notifications",
-        bodyText: "Goose can notify you when the strap connects, disconnects, or needs attention.",
+        bodyText: "Whoof can notify you when the strap connects, disconnects, or needs attention.",
         details: [
           "Connection and reconnect status",
           "Battery and sync reminders",

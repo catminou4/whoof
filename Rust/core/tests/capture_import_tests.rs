@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use goose_core::{
+use whoof_core::{
     capture_import::{
         CaptureImportOptions, CaptureSqliteImportOptions, CapturedFrameBatchOptions,
         CapturedFrameInput, import_capture_sqlite, import_captured_frame_batch,

@@ -1,6 +1,6 @@
 use std::{collections::BTreeMap, fs, path::Path};
 
-use goose_core::{
+use whoof_core::{
     calibration::{
         CalibrationDataset, CalibrationOptions, calibration_run_record, evaluate_linear_calibration,
     },

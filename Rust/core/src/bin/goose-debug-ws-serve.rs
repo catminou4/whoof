@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use goose_core::{
+use whoof_core::{
     debug_ws_server::{DebugWsServerOptions, serve_debug_ws_once},
     report::write_json_report,
     tool_args::{args, default_path, path_value, value},
@@ -13,13 +13,13 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let database_path = default_path(&args, "--db", "goose.sqlite")?;
     let session_id = value(&args, "--session-id")?
-        .ok_or_else(|| goose_core::GooseError::message("--session-id is required"))?;
+        .ok_or_else(|| whoof_core::GooseError::message("--session-id is required"))?;
     let token = value(&args, "--token")?
-        .ok_or_else(|| goose_core::GooseError::message("--token is required"))?;
+        .ok_or_else(|| whoof_core::GooseError::message("--token is required"))?;
     let bind_host = value(&args, "--bind-host")?.unwrap_or_else(|| "127.0.0.1".to_string());
     let port = parse_u16(
         value(&args, "--port")?.as_deref().unwrap_or("49152"),
@@ -61,20 +61,20 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn parse_u16(value: &str, name: &str) -> goose_core::GooseResult<u16> {
+fn parse_u16(value: &str, name: &str) -> whoof_core::GooseResult<u16> {
     value
         .parse::<u16>()
-        .map_err(|error| goose_core::GooseError::message(format!("{name} must be a u16: {error}")))
+        .map_err(|error| whoof_core::GooseError::message(format!("{name} must be a u16: {error}")))
 }
 
-fn parse_u64(value: &str, name: &str) -> goose_core::GooseResult<u64> {
+fn parse_u64(value: &str, name: &str) -> whoof_core::GooseResult<u64> {
     value
         .parse::<u64>()
-        .map_err(|error| goose_core::GooseError::message(format!("{name} must be a u64: {error}")))
+        .map_err(|error| whoof_core::GooseError::message(format!("{name} must be a u64: {error}")))
 }
 
-fn parse_usize(value: &str, name: &str) -> goose_core::GooseResult<usize> {
+fn parse_usize(value: &str, name: &str) -> whoof_core::GooseResult<usize> {
     value.parse::<usize>().map_err(|error| {
-        goose_core::GooseError::message(format!("{name} must be a usize: {error}"))
+        whoof_core::GooseError::message(format!("{name} must be a usize: {error}"))
     })
 }

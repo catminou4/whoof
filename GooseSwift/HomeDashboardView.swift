@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HomeDashboardView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   @EnvironmentObject private var router: AppRouter
   @ObservedObject var healthStore: HealthDataStore
   @Binding var selectedDate: Date

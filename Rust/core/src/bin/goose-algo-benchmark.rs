@@ -1,6 +1,6 @@
 use std::{collections::BTreeSet, fs, path::PathBuf, time::Instant};
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     algorithm_compare::{
         AlgorithmComparisonReport, compare_hrv_goose_to_reference,
@@ -98,7 +98,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let family = value(&args, "--family")?.unwrap_or_else(|| "hrv".to_string());
     let output = path_value(&args, "--output")?;
@@ -275,7 +275,7 @@ fn run_reference_comparison(
     algorithm_id: Option<&str>,
     input_path: &PathBuf,
     reference_report_path: Option<&PathBuf>,
-) -> goose_core::GooseResult<AlgorithmComparisonReport> {
+) -> whoof_core::GooseResult<AlgorithmComparisonReport> {
     match family {
         "hrv" => {
             reject_external_reference_report_for_family(family, reference_report_path)?;
@@ -314,7 +314,7 @@ fn run_reference_comparison(
 
 fn reject_external_reference_report_for_sleep_v1(
     reference_report_path: Option<&PathBuf>,
-) -> goose_core::GooseResult<()> {
+) -> whoof_core::GooseResult<()> {
     if reference_report_path.is_some() {
         return Err(GooseError::message(
             "--reference-report currently compares external sleep reports against goose.sleep.v0; omit it for goose.sleep.v1 reference comparison",
@@ -326,7 +326,7 @@ fn reject_external_reference_report_for_sleep_v1(
 fn reject_external_reference_report_for_family(
     family: &str,
     reference_report_path: Option<&PathBuf>,
-) -> goose_core::GooseResult<()> {
+) -> whoof_core::GooseResult<()> {
     if reference_report_path.is_some() {
         return Err(GooseError::message(format!(
             "--reference-report currently supports sleep comparisons; got family {family}"
@@ -377,7 +377,7 @@ impl BenchmarkRun {
 fn run_benchmark_algorithm(
     algorithm_id: &str,
     input_path: &PathBuf,
-) -> goose_core::GooseResult<BenchmarkRun> {
+) -> whoof_core::GooseResult<BenchmarkRun> {
     match algorithm_id {
         "goose.hrv.v0" => run_typed(input_path, |input: HrvInput| goose_hrv_v0(&input)),
         "goose.sleep.v0" => run_typed(input_path, |input: SleepInput| goose_sleep_v0(&input)),
@@ -396,7 +396,7 @@ fn run_benchmark_algorithm(
 fn run_typed<I, O>(
     input_path: &PathBuf,
     run: impl FnOnce(I) -> AlgorithmRunResult<O>,
-) -> goose_core::GooseResult<BenchmarkRun>
+) -> whoof_core::GooseResult<BenchmarkRun>
 where
     I: DeserializeOwned,
     O: Serialize,
@@ -449,7 +449,7 @@ where
     })
 }
 
-fn benchmark_label_args(args: &[String]) -> goose_core::GooseResult<Option<BenchmarkLabelArgs>> {
+fn benchmark_label_args(args: &[String]) -> whoof_core::GooseResult<Option<BenchmarkLabelArgs>> {
     let Some(value_raw) = value(args, "--label-value")? else {
         return Ok(None);
     };
@@ -641,7 +641,7 @@ fn merge_data_coverage(
     existing
 }
 
-fn read_typed_input<I>(input_path: &PathBuf) -> goose_core::GooseResult<I>
+fn read_typed_input<I>(input_path: &PathBuf) -> whoof_core::GooseResult<I>
 where
     I: DeserializeOwned,
 {
@@ -650,12 +650,12 @@ where
     serde_json::from_str(&input_raw).map_err(|source| GooseError::json(input_path, source))
 }
 
-fn read_json_value(path: &PathBuf) -> goose_core::GooseResult<serde_json::Value> {
+fn read_json_value(path: &PathBuf) -> whoof_core::GooseResult<serde_json::Value> {
     let raw = fs::read_to_string(path).map_err(|source| GooseError::io(path, source))?;
     serde_json::from_str(&raw).map_err(|source| GooseError::json(path, source))
 }
 
-fn input_path(args: &[String], algorithm_id: &str) -> goose_core::GooseResult<PathBuf> {
+fn input_path(args: &[String], algorithm_id: &str) -> whoof_core::GooseResult<PathBuf> {
     if let Some(path) = path_value(args, "--input")? {
         return Ok(path);
     }
@@ -669,7 +669,7 @@ fn input_path(args: &[String], algorithm_id: &str) -> goose_core::GooseResult<Pa
     ))
 }
 
-fn input_path_for_family(args: &[String], family: &str) -> goose_core::GooseResult<PathBuf> {
+fn input_path_for_family(args: &[String], family: &str) -> whoof_core::GooseResult<PathBuf> {
     if let Some(path) = path_value(args, "--input")? {
         return Ok(path);
     }

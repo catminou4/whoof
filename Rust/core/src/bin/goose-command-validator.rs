@@ -1,6 +1,6 @@
 use std::fs;
 
-use goose_core::{
+use whoof_core::{
     commands::{
         CommandEmulatorLogEvidenceOptions, command_capture_plan_from_results,
         command_evidence_from_emulator_log, command_evidence_template,
@@ -18,7 +18,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let output = path_value(&args, "--output")?;
 
@@ -54,15 +54,15 @@ fn run() -> goose_core::GooseResult<()> {
         if let Some(evidence_output) = path_value(&args, "--emulator-evidence-output")? {
             if let Some(parent) = evidence_output.parent() {
                 fs::create_dir_all(parent)
-                    .map_err(|source| goose_core::GooseError::io(parent, source))?;
+                    .map_err(|source| whoof_core::GooseError::io(parent, source))?;
             }
             let json = serde_json::to_string_pretty(&emulator_report).map_err(|source| {
-                goose_core::GooseError::message(format!(
+                whoof_core::GooseError::message(format!(
                     "cannot serialize emulator evidence: {source}"
                 ))
             })?;
             fs::write(&evidence_output, json.as_bytes())
-                .map_err(|source| goose_core::GooseError::io(&evidence_output, source))?;
+                .map_err(|source| whoof_core::GooseError::io(&evidence_output, source))?;
         }
         evidence.extend(emulator_report.evidence);
     }
@@ -72,15 +72,15 @@ fn run() -> goose_core::GooseResult<()> {
         if let Some(match_output) = path_value(&args, "--local-frame-match-output")? {
             if let Some(parent) = match_output.parent() {
                 fs::create_dir_all(parent)
-                    .map_err(|source| goose_core::GooseError::io(parent, source))?;
+                    .map_err(|source| whoof_core::GooseError::io(parent, source))?;
             }
             let json = serde_json::to_string_pretty(&match_report).map_err(|source| {
-                goose_core::GooseError::message(format!(
+                whoof_core::GooseError::message(format!(
                     "cannot serialize local frame match report: {source}"
                 ))
             })?;
             fs::write(&match_output, json.as_bytes())
-                .map_err(|source| goose_core::GooseError::io(&match_output, source))?;
+                .map_err(|source| whoof_core::GooseError::io(&match_output, source))?;
         }
         evidence = match_report.evidence;
     }

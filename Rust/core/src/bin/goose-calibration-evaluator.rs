@@ -1,6 +1,6 @@
 use std::fs;
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     calibration::{
         CalibrationDataset, CalibrationOptions, calibration_run_record, evaluate_linear_calibration,
@@ -17,7 +17,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let input_path = default_path(
         &args,

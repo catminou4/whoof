@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct RootView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   @AppStorage(OnboardingStorage.onboardingComplete) private var onboardingComplete = false
   @AppStorage(OnboardingStorage.onboardingRedoRequested) private var onboardingRedoRequested = false
 
@@ -61,7 +61,7 @@ struct RootView: View {
 }
 
 private struct SyncToastHost: View {
-  @ObservedObject var ble: GooseBLEClient
+  @ObservedObject var ble: WhoofBLEClient
 
   var body: some View {
     VStack {
@@ -94,7 +94,7 @@ private struct SyncToastHost: View {
 }
 
 private struct SyncStatusToastView: View {
-  let toast: GooseSyncToast
+  let toast: WhoofSyncToast
   @Environment(\.colorScheme) private var colorScheme
 
   var body: some View {
@@ -210,7 +210,7 @@ private struct SyncToastIcon: View {
 }
 
 private struct SyncFailureSheet: View {
-  let failure: GooseSyncFailure
+  let failure: WhoofSyncFailure
   @Environment(\.dismiss) private var dismiss
 
   var body: some View {

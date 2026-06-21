@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     step_discovery::{
         StepCaptureValidationOptions, StepPacketDiscoveryOptions, run_step_capture_validation,
         run_step_packet_discovery,

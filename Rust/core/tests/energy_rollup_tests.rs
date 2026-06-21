@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     energy_rollup::{
         EnergyDailyRollupOptions, GOOSE_ENERGY_UNAVAILABLE_STATUS_V0_ID,
         GOOSE_ENERGY_UNAVAILABLE_STATUS_V0_VERSION,

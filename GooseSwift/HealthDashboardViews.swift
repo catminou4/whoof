@@ -554,7 +554,7 @@ struct HealthMonitorView: View {
 }
 
 struct PacketHealthView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   @ObservedObject var store: HealthDataStore
 
   var body: some View {

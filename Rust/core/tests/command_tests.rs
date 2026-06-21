@@ -1,4 +1,4 @@
-use goose_core::commands::{
+use whoof_core::commands::{
     COMMAND_DEFINITIONS, CommandDefinition, CommandDirectSendPreflightInput,
     CommandEmulatorLogEvidenceOptions, CommandEvidence, CommandLocalFrameCandidate,
     CommandRiskGate, command_capture_plan_from_results, command_evidence_from_emulator_log,
@@ -7,7 +7,7 @@ use goose_core::commands::{
     direct_send_preflight_from_gate, load_command_evidence, load_command_local_frame_candidates,
     validate_commands,
 };
-use goose_core::protocol::{
+use whoof_core::protocol::{
     COMMAND_GET_HELLO, DeviceType, PACKET_TYPE_COMMAND_RESPONSE, ParsedPayload,
     build_v5_command_frame, build_v5_payload_frame, parse_frame_hex,
 };
@@ -2297,7 +2297,7 @@ fn ready_command_evidence_for_definition(definition: &CommandDefinition) -> Comm
     })
 }
 
-fn ready_get_hello_gate() -> goose_core::commands::CommandDirectSendGate {
+fn ready_get_hello_gate() -> whoof_core::commands::CommandDirectSendGate {
     let report = validate_commands(&[ready_get_hello_evidence()]);
     let ready = report
         .commands
@@ -2309,7 +2309,7 @@ fn ready_get_hello_gate() -> goose_core::commands::CommandDirectSendGate {
 
 fn ready_select_wrist_gate(
     select_wrist_frame: &str,
-) -> goose_core::commands::CommandDirectSendGate {
+) -> whoof_core::commands::CommandDirectSendGate {
     let report = validate_commands(&[with_trusted_capture(CommandEvidence {
         command: "select_wrist".to_string(),
         official_capture_count: 1,
@@ -2330,7 +2330,7 @@ fn ready_select_wrist_gate(
     direct_send_gate_from_result("select_wrist", Some(ready))
 }
 
-fn ready_start_firmware_gate(critical_frame: &str) -> goose_core::commands::CommandDirectSendGate {
+fn ready_start_firmware_gate(critical_frame: &str) -> whoof_core::commands::CommandDirectSendGate {
     let report = validate_commands(&[critical_command_evidence(
         critical_frame,
         command_failure_response_frame_hex(142),

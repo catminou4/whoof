@@ -4,7 +4,7 @@ import SwiftUI
 import UIKit
 
 struct HealthMetricFamilyView: View {
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   @EnvironmentObject private var router: AppRouter
   let route: HealthRoute
   @ObservedObject var store: HealthDataStore
@@ -394,7 +394,7 @@ struct StrainV2ActivityBackground: View {
 
 struct StrainV2OverviewPage: View {
   @EnvironmentObject private var router: AppRouter
-  @EnvironmentObject private var model: GooseAppModel
+  @EnvironmentObject private var model: WhoofAppModel
   @ObservedObject var store: HealthDataStore
   @Binding var selectedDate: Date
   @Environment(\.colorScheme) private var colorScheme

@@ -6,7 +6,7 @@ import UIKit
 struct FitnessSummaryView: View {
   let activity: ActivityKind
   @ObservedObject var session: ActivitySessionModel
-  @ObservedObject var ble: GooseBLEClient
+  @ObservedObject var ble: WhoofBLEClient
   @ObservedObject var locationTracker: ActivityLocationTracker
   let onDone: () -> Void
 

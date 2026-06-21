@@ -3,7 +3,7 @@ use std::path::Path;
 use rusqlite::{Connection, params};
 use sha2::{Digest, Sha256};
 
-use goose_core::{
+use whoof_core::{
     activity_sessions::{
         ActivitySessionCorrectionKind, activity_session_correction_plans,
         append_activity_session_correction_history,

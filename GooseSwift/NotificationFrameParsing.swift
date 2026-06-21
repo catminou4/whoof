@@ -139,8 +139,8 @@ struct NotificationFrameInterpretation {
 
 struct ParsedNotificationFrameResult {
   let interpretation: NotificationFrameInterpretation
-  let event: GooseNotificationEvent
-  let bridgeTiming: GooseRustBridgeTiming?
+  let event: WhoofNotificationEvent
+  let bridgeTiming: WhoofRustBridgeTiming?
 }
 
 struct ParsedNotificationFrameDispatch {
@@ -149,7 +149,7 @@ struct ParsedNotificationFrameDispatch {
   let offMainDataSignalCount: Int
   let skippedDiagnosticFrameCount: Int
   let skippedParseErrorCount: Int
-  let bridgeTiming: GooseRustBridgeTiming?
+  let bridgeTiming: WhoofRustBridgeTiming?
   let batchTiming: NotificationFrameBatchTiming?
 }
 
@@ -159,7 +159,7 @@ struct NotificationParseContext {
   let overnightGuardActive: Bool
   let respiratoryPacketWatchActive: Bool
   let fallbackHeartRate: Int?
-  let ble: GooseBLEClient
+  let ble: WhoofBLEClient
   let packetUIStateAggregator: PacketUIStateAggregator
   let whoopDataSignalPipeline: WhoopDataSignalPipeline
 }
@@ -183,7 +183,7 @@ enum OvernightRawNotificationStorageClassifier {
   private static let compactLivePacketTypes: Set<UInt8> = [40, 43, 51]
   private static let compactLivePacketKs: Set<UInt8> = [2, 10, 11, 20, 21]
 
-  static func classify(_ event: GooseNotificationEvent) -> Classification {
+  static func classify(_ event: WhoofNotificationEvent) -> Classification {
     let headerBytes = Array(event.value.prefix(10))
     guard headerBytes.count >= 9, headerBytes[0] == 0xaa else {
       return Classification(packetType: nil, packetK: nil, compactKey: nil)
@@ -212,7 +212,7 @@ enum OvernightRawNotificationStorageClassifier {
 }
 
 final class NotificationFrameParser: @unchecked Sendable {
-  private let rust = GooseRustBridge()
+  private let rust = WhoofRustBridge()
 
   func parse(frameHex: String, deviceType: String) -> NotificationFrameParseResult {
     do {
@@ -232,7 +232,7 @@ final class NotificationFrameParser: @unchecked Sendable {
   func parseBatch(
     frameHexes: [String],
     deviceType: String
-  ) -> ([NotificationFrameParseResult], GooseRustBridgeTiming?, NotificationFrameBatchTiming?) {
+  ) -> ([NotificationFrameParseResult], WhoofRustBridgeTiming?, NotificationFrameBatchTiming?) {
     guard !frameHexes.isEmpty else {
       return ([], nil, nil)
     }

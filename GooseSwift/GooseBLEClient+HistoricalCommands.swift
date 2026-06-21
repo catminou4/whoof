@@ -3,7 +3,7 @@ import Foundation
 import OSLog
 
 
-extension GooseBLEClient {
+extension WhoofBLEClient {
   func beginHistoricalSync(
     trigger: String,
     automatic: Bool,
@@ -229,7 +229,7 @@ extension GooseBLEClient {
   }
 
   func debugCommandPayload(
-    for definition: GooseDebugCommandDefinition,
+    for definition: WhoofDebugCommandDefinition,
     payloadHex: String?
   ) -> [UInt8]? {
     if definition.id == "get_device_config_value" || definition.id == "get_feature_flag_value" {

@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     capture_correlation::{
         CaptureCorrelationOptions, DEFAULT_MIN_OWNED_CAPTURES_PER_SUMMARY, run_capture_correlation,
     },
@@ -14,7 +14,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let fixtures = default_path(&args, "--fixtures", "fixtures")?;
     let index_path = path_value(&args, "--index")?;
@@ -43,11 +43,11 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn optional_usize(args: &[String], name: &str) -> goose_core::GooseResult<Option<usize>> {
+fn optional_usize(args: &[String], name: &str) -> whoof_core::GooseResult<Option<usize>> {
     Ok(value(args, name)?
         .map(|raw| {
             raw.parse::<usize>().map_err(|source| {
-                goose_core::GooseError::message(format!("invalid {name}: {source}"))
+                whoof_core::GooseError::message(format!("invalid {name}: {source}"))
             })
         })
         .transpose()?)

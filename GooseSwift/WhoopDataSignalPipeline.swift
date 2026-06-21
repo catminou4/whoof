@@ -3,9 +3,9 @@ import Foundation
 final class WhoopDataSignalPipeline {
   var onStatus: ((String) -> Void)?
 
-  private let queue = DispatchQueue(label: "com.goose.swift.whoop-data-signal", qos: .utility)
+  private let queue = DispatchQueue(label: "com.whoof.swift.whoop-data-signal", qos: .utility)
   private let stateLock = NSLock()
-  private let ble: GooseBLEClient
+  private let ble: WhoofBLEClient
   private let packetUIStateAggregator: PacketUIStateAggregator
   private let statusInterval: TimeInterval
   private let logInterval: TimeInterval
@@ -22,7 +22,7 @@ final class WhoopDataSignalPipeline {
   private var lastLoggedAt: [String: Date] = [:]
 
   init(
-    ble: GooseBLEClient,
+    ble: WhoofBLEClient,
     packetUIStateAggregator: PacketUIStateAggregator,
     statusInterval: TimeInterval,
     logInterval: TimeInterval,

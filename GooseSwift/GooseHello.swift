@@ -1,7 +1,7 @@
 import Foundation
 import CryptoKit
 
-enum GooseHello {
+enum WhoofHello {
   static let clientHelloFrameHex = "aa0108000001e67123019101363e5c8d"
 
   static var clientHelloFrame: Data {

@@ -1,6 +1,6 @@
 use std::fs;
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     bridge::{BRIDGE_REQUEST_SCHEMA, BridgeRequest, handle_bridge_request},
     report::write_json_report,
@@ -15,7 +15,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let method = value(&args, "--method")?
         .or(value(&args, "--report")?)
@@ -247,7 +247,7 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn metric_bridge_method(value: &str) -> goose_core::GooseResult<&'static str> {
+fn metric_bridge_method(value: &str) -> whoof_core::GooseResult<&'static str> {
     match value.trim() {
         "motion" | "motion_features" | "metrics.motion_features" => Ok("metrics.motion_features"),
         "heart-rate" | "heart_rate" | "heart_rate_features" | "metrics.heart_rate_features" => {
@@ -415,7 +415,7 @@ fn insert_string_arg(
     args: &[String],
     name: &str,
     field: &str,
-) -> goose_core::GooseResult<()> {
+) -> whoof_core::GooseResult<()> {
     if let Some(value) = value(args, name)? {
         object.insert(field.to_string(), json!(value));
     }
@@ -433,7 +433,7 @@ fn insert_usize_arg(
     args: &[String],
     name: &str,
     field: &str,
-) -> goose_core::GooseResult<()> {
+) -> whoof_core::GooseResult<()> {
     if let Some(raw) = value(args, name)? {
         let parsed = raw
             .parse::<usize>()
@@ -448,7 +448,7 @@ fn insert_i64_arg(
     args: &[String],
     name: &str,
     field: &str,
-) -> goose_core::GooseResult<()> {
+) -> whoof_core::GooseResult<()> {
     if let Some(raw) = value(args, name)? {
         let parsed = raw
             .parse::<i64>()
@@ -463,7 +463,7 @@ fn insert_f64_arg(
     args: &[String],
     name: &str,
     field: &str,
-) -> goose_core::GooseResult<()> {
+) -> whoof_core::GooseResult<()> {
     if let Some(raw) = value(args, name)? {
         let parsed = raw
             .parse::<f64>()
@@ -476,7 +476,7 @@ fn insert_f64_arg(
 fn merge_args_json(
     object: &mut Map<String, Value>,
     args: &[String],
-) -> goose_core::GooseResult<()> {
+) -> whoof_core::GooseResult<()> {
     if let Some(raw) = value(args, "--args-json")? {
         merge_args_value(
             object,
@@ -497,7 +497,7 @@ fn merge_args_json(
     Ok(())
 }
 
-fn merge_args_value(object: &mut Map<String, Value>, value: Value) -> goose_core::GooseResult<()> {
+fn merge_args_value(object: &mut Map<String, Value>, value: Value) -> whoof_core::GooseResult<()> {
     let Value::Object(extra) = value else {
         return Err(GooseError::message(
             "metric feature extra args must be a JSON object",

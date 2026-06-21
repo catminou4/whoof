@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     capture_import::{CaptureSqliteImportOptions, ensure_database_parent, import_capture_sqlite},
     report::write_json_report,
     store::GooseStore,
@@ -12,14 +12,14 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let source = path_value(&args, "--capture-sqlite")?
-        .ok_or_else(|| goose_core::GooseError::message("missing required --capture-sqlite path"))?;
+        .ok_or_else(|| whoof_core::GooseError::message("missing required --capture-sqlite path"))?;
     let db = default_path(&args, "--db", "goose.sqlite")?;
     let output = path_value(&args, "--output")?;
     let session_id = value(&args, "--session-id")?
-        .ok_or_else(|| goose_core::GooseError::message("missing required --session-id value"))?;
+        .ok_or_else(|| whoof_core::GooseError::message("missing required --session-id value"))?;
     let device_model =
         value(&args, "--device-model")?.unwrap_or_else(|| "WHOOP 5.0 Goose".to_string());
     let sensitivity =

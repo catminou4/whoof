@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     capture_import::{CapturedFrameBatchOptions, CapturedFrameInput, import_captured_frame_batch},
     metric_features::{
         HeartRateFeatureOptions, HrvFeatureOptions, MetricWindowFeatureOptions,

@@ -29,8 +29,8 @@ final class OvernightSQLiteMirrorQueue: @unchecked Sendable {
     return formatter
   }()
 
-  private let queue = DispatchQueue(label: "com.goose.swift.overnight-sqlite-mirror", qos: .utility)
-  private let rust = GooseRustBridge()
+  private let queue = DispatchQueue(label: "com.whoof.swift.overnight-sqlite-mirror", qos: .utility)
+  private let rust = WhoofRustBridge()
   private let databasePath: String
   private let maxQueuedRows: Int
   private let flushBatchLimit: Int
@@ -67,7 +67,7 @@ final class OvernightSQLiteMirrorQueue: @unchecked Sendable {
 
   func enqueueRawNotification(
     sessionID: String?,
-    event: GooseNotificationEvent,
+    event: WhoofNotificationEvent,
     activeDeviceName: String,
     connectionState: String,
     completion: (@MainActor (OvernightSQLiteMirrorSnapshot) -> Void)? = nil
@@ -113,7 +113,7 @@ final class OvernightSQLiteMirrorQueue: @unchecked Sendable {
 
   func enqueueHistoricalRangePoll(
     sessionID: String?,
-    telemetry: GooseHistoricalRangeTelemetry,
+    telemetry: WhoofHistoricalRangeTelemetry,
     completion: (@MainActor (OvernightSQLiteMirrorSnapshot) -> Void)? = nil
   ) {
     guard let sessionID else {

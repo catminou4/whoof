@@ -1,6 +1,6 @@
 use std::{fs, fs::File, io::Write, path::Path};
 
-use goose_core::{
+use whoof_core::{
     capture_import::{CaptureImportOptions, import_fixture_index},
     export::{RawExportFilters, RawExportOptions, export_raw_timeframe},
     fixtures::build_fixture_index,
@@ -493,7 +493,7 @@ fn privacy_lint_scans_zip_entries() {
     assert_next_action(&lint, "debug_query_token");
 }
 
-fn assert_rule(report: &goose_core::privacy_lint::PrivacyLintReport, rule: &str) {
+fn assert_rule(report: &whoof_core::privacy_lint::PrivacyLintReport, rule: &str) {
     assert!(
         report
             .files
@@ -505,7 +505,7 @@ fn assert_rule(report: &goose_core::privacy_lint::PrivacyLintReport, rule: &str)
     );
 }
 
-fn assert_next_action(report: &goose_core::privacy_lint::PrivacyLintReport, reason: &str) {
+fn assert_next_action(report: &whoof_core::privacy_lint::PrivacyLintReport, reason: &str) {
     assert!(
         report
             .next_actions

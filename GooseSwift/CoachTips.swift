@@ -12,7 +12,7 @@ struct CoachInlineTip: Identifiable {
 
 @MainActor
 enum CoachTipFactory {
-  static func homeTip(healthStore: HealthDataStore, appModel: GooseAppModel) -> CoachInlineTip {
+  static func homeTip(healthStore: HealthDataStore, appModel: WhoofAppModel) -> CoachInlineTip {
     let readiness = healthStore.metricInputReadinessSummary()
     let inputNextAction = healthStore.metricInputReadinessNextActionSummary()
     let scoreNextAction = healthStore.packetDerivedScoreNextActionSummary()
@@ -35,7 +35,7 @@ enum CoachTipFactory {
       ),
       source: "Local readiness, scores, and live HR",
       prompt: """
-      Give me today's coaching priority from my local Goose context. Use readiness, sleep, recovery, strain, stress, live heart rate, and missing-data gaps. Cite the local tool outputs and keep it to one concrete next action.
+      Give me today's coaching priority from my local Whoof context. Use readiness, sleep, recovery, strain, stress, live heart rate, and missing-data gaps. Cite the local tool outputs and keep it to one concrete next action.
 
       Current local highlights:
       - Readiness: \(readiness)
@@ -54,7 +54,7 @@ enum CoachTipFactory {
   static func metricTip(
     route: HealthRoute,
     healthStore: HealthDataStore,
-    appModel: GooseAppModel
+    appModel: WhoofAppModel
   ) -> CoachInlineTip {
     switch route {
     case .sleep:
@@ -72,14 +72,14 @@ enum CoachTipFactory {
         title: "\(route.title) Coach",
         message: "\(snapshot.title): \(snapshot.displayValue) | \(snapshot.status).",
         source: snapshot.provenance,
-        prompt: "Explain my \(route.title.lowercased()) page using the local Goose context. Cite the tool outputs and call out stale or missing data.",
+        prompt: "Explain my \(route.title.lowercased()) page using the local Whoof context. Cite the tool outputs and call out stale or missing data.",
         systemImage: "sparkles",
         tint: snapshot.tint
       )
     }
   }
 
-  static func sleepTip(healthStore: HealthDataStore, ble: GooseBLEClient) -> CoachInlineTip {
+  static func sleepTip(healthStore: HealthDataStore, ble: WhoofBLEClient) -> CoachInlineTip {
     let snapshot = healthStore.snapshot(for: .sleep)
     let schedule = healthStore.sleepV1ScheduleSummary()
     let debt = healthStore.sleepV1DebtSummary()
@@ -96,7 +96,7 @@ enum CoachTipFactory {
       ),
       source: "Local sleep score and schedule",
       prompt: """
-      Explain my sleep page and give one practical next action. Use only local Goose context and call out missing data and provenance.
+      Explain my sleep page and give one practical next action. Use only local Whoof context and call out missing data and provenance.
 
       Current local highlights:
       - Sleep score: \(snapshot.displayValue) | \(snapshot.status) | \(snapshot.freshness)
@@ -143,7 +143,7 @@ enum CoachTipFactory {
     )
   }
 
-  private static func strainTip(healthStore: HealthDataStore, appModel: GooseAppModel) -> CoachInlineTip {
+  private static func strainTip(healthStore: HealthDataStore, appModel: WhoofAppModel) -> CoachInlineTip {
     let snapshot = healthStore.snapshot(for: .strain)
     let strain = healthStore.strainFeatureScoreSummary()
     let motion = healthStore.motionFeatureSummary()
@@ -171,7 +171,7 @@ enum CoachTipFactory {
     )
   }
 
-  private static func stressTip(healthStore: HealthDataStore, appModel: GooseAppModel) -> CoachInlineTip {
+  private static func stressTip(healthStore: HealthDataStore, appModel: WhoofAppModel) -> CoachInlineTip {
     let snapshot = healthStore.snapshot(for: .stress)
     let stress = healthStore.stressFeatureScoreSummary()
     let hrv = healthStore.hrvFeatureSummary()

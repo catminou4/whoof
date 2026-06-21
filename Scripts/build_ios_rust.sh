@@ -59,9 +59,9 @@ case "$PLATFORM_NAME" in
 esac
 
 PLATFORM_RUST_DIR="$RUST_DIR/$PLATFORM_NAME"
-PLATFORM_OUTPUT_LIB="$PLATFORM_RUST_DIR/libgoose_core.a"
-PLATFORM_TARGET_FILE="$PLATFORM_RUST_DIR/.goose_core.target"
-PLATFORM_PROFILE_FILE="$PLATFORM_RUST_DIR/.goose_core.profile"
+PLATFORM_OUTPUT_LIB="$PLATFORM_RUST_DIR/libwhoof_core.a"
+PLATFORM_TARGET_FILE="$PLATFORM_RUST_DIR/.whoof_core.target"
+PLATFORM_PROFILE_FILE="$PLATFORM_RUST_DIR/.whoof_core.profile"
 
 if [[ -f "$PLATFORM_OUTPUT_LIB" && -f "$PLATFORM_TARGET_FILE" && -f "$PLATFORM_PROFILE_FILE" ]]; then
   CURRENT_BUILT_TARGET="$(cat "$PLATFORM_TARGET_FILE")"
@@ -108,7 +108,7 @@ case "$RUST_TARGET" in
     ;;
   esac
 
-export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$APP_DIR/build/rust-target/goose-core}"
+export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$APP_DIR/build/rust-target/whoof-core}"
 
 cargo_args=(
   build
@@ -122,9 +122,9 @@ fi
 cargo "${cargo_args[@]}"
 
 mkdir -p "$PLATFORM_RUST_DIR"
-cp "$CARGO_TARGET_DIR/$RUST_TARGET/$CARGO_PROFILE_DIR/libgoose_core.a" \
-  "$PLATFORM_RUST_DIR/libgoose_core.a"
+cp "$CARGO_TARGET_DIR/$RUST_TARGET/$CARGO_PROFILE_DIR/libwhoof_core.a" \
+  "$PLATFORM_RUST_DIR/libwhoof_core.a"
 printf '%s\n' "$RUST_TARGET" > "$PLATFORM_TARGET_FILE"
 printf '%s\n' "$CARGO_PROFILE_DIR" > "$PLATFORM_PROFILE_FILE"
 
-echo "Built Goose Rust iOS library for $RUST_TARGET ($CARGO_PROFILE_DIR) at $PLATFORM_RUST_DIR/libgoose_core.a"
+echo "Built Goose Rust iOS library for $RUST_TARGET ($CARGO_PROFILE_DIR) at $PLATFORM_RUST_DIR/libwhoof_core.a"

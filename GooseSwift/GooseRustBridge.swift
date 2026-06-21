@@ -1,13 +1,13 @@
 import Foundation
 
-enum GooseRustBridgeError: Error {
+enum WhoofRustBridgeError: Error {
   case encodingFailed
   case nullResponse
   case malformedResponse
   case methodFailed(String)
 }
 
-struct GooseRustBridgeTiming {
+struct WhoofRustBridgeTiming {
   let method: String
   let methodElapsedMicroseconds: Int
   let requestEncodeMicroseconds: Int
@@ -19,9 +19,9 @@ struct GooseRustBridgeTiming {
   }
 }
 
-final class GooseRustBridge {
+final class WhoofRustBridge {
   private var counter = 0
-  private(set) var lastTiming: GooseRustBridgeTiming?
+  private(set) var lastTiming: WhoofRustBridgeTiming?
 
   func request(method: String, args: [String: Any] = [:]) throws -> [String: Any] {
     try requestValue(method: method, args: args) as? [String: Any] ?? [:]
@@ -39,21 +39,21 @@ final class GooseRustBridge {
     let encodeStarted = DispatchTime.now()
     let data = try JSONSerialization.data(withJSONObject: payload)
     guard let request = String(data: data, encoding: .utf8) else {
-      throw GooseRustBridgeError.encodingFailed
+      throw WhoofRustBridgeError.encodingFailed
     }
     let requestEncodeMicroseconds = Self.elapsedMicroseconds(since: encodeStarted)
 
     var responsePointer: UnsafeMutablePointer<CChar>?
     let ffiStarted = DispatchTime.now()
     request.withCString { pointer in
-      responsePointer = goose_bridge_handle_json(pointer)
+      responsePointer = whoof_bridge_handle_json(pointer)
     }
     let ffiRoundTripMicroseconds = Self.elapsedMicroseconds(since: ffiStarted)
     guard let responsePointer else {
-      throw GooseRustBridgeError.nullResponse
+      throw WhoofRustBridgeError.nullResponse
     }
     defer {
-      goose_bridge_free_string(responsePointer)
+      whoof_bridge_free_string(responsePointer)
     }
 
     let responseDecodeStarted = DispatchTime.now()
@@ -63,7 +63,7 @@ final class GooseRustBridge {
       let response = try JSONSerialization.jsonObject(with: responseData) as? [String: Any],
       let ok = response["ok"] as? Bool
     else {
-      throw GooseRustBridgeError.malformedResponse
+      throw WhoofRustBridgeError.malformedResponse
     }
     let responseDecodeMicroseconds = Self.elapsedMicroseconds(since: responseDecodeStarted)
     lastTiming = Self.timing(
@@ -75,7 +75,7 @@ final class GooseRustBridge {
     if !ok {
       let error = response["error"] as? [String: Any]
       let message = error?["message"] as? String ?? "Rust bridge method failed"
-      throw GooseRustBridgeError.methodFailed(message)
+      throw WhoofRustBridgeError.methodFailed(message)
     }
     return response["result"] ?? [:]
   }
@@ -85,13 +85,13 @@ final class GooseRustBridge {
     requestEncodeMicroseconds: Int,
     ffiRoundTripMicroseconds: Int,
     responseDecodeMicroseconds: Int
-  ) -> GooseRustBridgeTiming? {
+  ) -> WhoofRustBridgeTiming? {
     guard let timing = response["timing"] as? [String: Any],
           let method = timing["method"] as? String else {
       return nil
     }
     if let elapsed = timing["method_elapsed_us"] as? Int {
-      return GooseRustBridgeTiming(
+      return WhoofRustBridgeTiming(
         method: method,
         methodElapsedMicroseconds: elapsed,
         requestEncodeMicroseconds: requestEncodeMicroseconds,
@@ -100,7 +100,7 @@ final class GooseRustBridge {
       )
     }
     if let elapsed = timing["method_elapsed_us"] as? Double {
-      return GooseRustBridgeTiming(
+      return WhoofRustBridgeTiming(
         method: method,
         methodElapsedMicroseconds: Int(elapsed),
         requestEncodeMicroseconds: requestEncodeMicroseconds,

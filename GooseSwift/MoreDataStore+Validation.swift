@@ -53,7 +53,7 @@ extension MoreDataStore {
   }
 
   nonisolated static func rawValidationRunbookMarkdown(
-    bridge: GooseRustBridge,
+    bridge: WhoofRustBridge,
     manifest: [String: Any]
   ) throws -> String {
     let result = try bridge.request(
@@ -64,7 +64,7 @@ extension MoreDataStore {
       return markdown
     }
     throw NSError(
-      domain: "GooseRawValidationRunbook",
+      domain: "WhoofRawValidationRunbook",
       code: 1,
       userInfo: [NSLocalizedDescriptionKey: "Rust runbook renderer returned no markdown"]
     )
@@ -96,7 +96,7 @@ extension MoreDataStore {
 
     DispatchQueue.global(qos: .userInitiated).async {
       do {
-        let result = try GooseLocalDataExporter.createBundle()
+        let result = try WhoofLocalDataExporter.createBundle()
         DispatchQueue.main.async {
           self.localExportInProgress = false
           self.localExportStatus = "Saved \(result.fileCount) files, \(Self.byteCountText(result.byteCount))\(result.manifestStatusSuffix) | \(result.validation.summary)"
@@ -186,7 +186,7 @@ extension MoreDataStore {
         method: "protocol.parse_frame_hex",
         args: [
           "device_type": "GOOSE",
-          "frame_hex": GooseHello.clientHelloFrameHex,
+          "frame_hex": WhoofHello.clientHelloFrameHex,
         ]
       )
       frameParseStatus = "Parsed \(Self.firstString(value, keys: ["packet_type_name", "packet_type"]) ?? "frame")"
@@ -331,7 +331,7 @@ extension MoreDataStore {
   static func previewConnected() -> MoreDataStore {
     let store = previewDefault()
     store.captureStatus = "Ready for connected strap"
-    store.liveCaptureStatus = "Ready; notifications are mirrored through GooseBLEClient.onNotification"
+    store.liveCaptureStatus = "Ready; notifications are mirrored through WhoofBLEClient.onNotification"
     store.recentCaptureSessions = []
     store.healthSyncReports = ["Apple Health metric sync disabled; profile weight autofill only"]
     return store
@@ -435,7 +435,7 @@ extension MoreDataStore {
   static func applicationDirectory() -> URL {
     let baseDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
       ?? FileManager.default.temporaryDirectory
-    let directory = baseDirectory.appendingPathComponent("GooseSwift", isDirectory: true)
+    let directory = baseDirectory.appendingPathComponent("WhoofSwift", isDirectory: true)
     try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     return directory
   }
@@ -443,7 +443,7 @@ extension MoreDataStore {
   static func documentsApplicationDirectory() -> URL {
     let baseDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
       ?? FileManager.default.temporaryDirectory
-    let directory = baseDirectory.appendingPathComponent("GooseSwift", isDirectory: true)
+    let directory = baseDirectory.appendingPathComponent("WhoofSwift", isDirectory: true)
     try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     return directory
   }
@@ -504,7 +504,7 @@ extension MoreDataStore {
   }
 
   nonisolated static func validateRawExportArtifacts(
-    bridge: GooseRustBridge,
+    bridge: WhoofRustBridge,
     bundlePath: String,
     zipPath: String
   ) -> RawExportArtifactValidationResult {
@@ -683,7 +683,7 @@ extension MoreDataStore {
   }
 
   nonisolated static func errorSummary(_ error: Error) -> String {
-    if case let GooseRustBridgeError.methodFailed(message) = error {
+    if case let WhoofRustBridgeError.methodFailed(message) = error {
       return message
     }
     return String(describing: error)

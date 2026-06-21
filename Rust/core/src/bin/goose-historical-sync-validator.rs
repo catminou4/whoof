@@ -1,6 +1,6 @@
 use std::fs;
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     historical_sync::{
         HistoricalSyncGeneration, HistoricalSyncPhysicalValidationInput,
@@ -17,7 +17,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let output = path_value(&args, "--output")?;
 
@@ -46,7 +46,7 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn generation_arg(args: &[String]) -> goose_core::GooseResult<HistoricalSyncGeneration> {
+fn generation_arg(args: &[String]) -> whoof_core::GooseResult<HistoricalSyncGeneration> {
     match value(args, "--generation")?
         .unwrap_or_else(|| "gen5".to_string())
         .trim()

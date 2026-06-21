@@ -221,7 +221,7 @@ struct SleepV2CalculationRow: View {
 }
 
 struct SleepV2AlarmSheet: View {
-  @ObservedObject var ble: GooseBLEClient
+  @ObservedObject var ble: WhoofBLEClient
   @Environment(\.dismiss) private var dismiss
   @Environment(\.colorScheme) private var colorScheme
   @State private var alarmTime = Self.defaultWakeTime()
@@ -413,7 +413,7 @@ struct SleepV2AlarmSheet: View {
   private func hapticCard(palette: SleepV2Palette) -> some View {
     DisclosureGroup(isExpanded: $showingHapticOptions) {
       VStack(alignment: .leading, spacing: 10) {
-        Text("Choose the vibration pattern Goose should use for this alarm profile.")
+        Text("Choose the vibration pattern Whoof should use for this alarm profile.")
           .font(.footnote)
           .foregroundStyle(palette.secondaryText)
           .fixedSize(horizontal: false, vertical: true)
@@ -757,7 +757,7 @@ struct SleepV2AlarmTileBackground: View {
 }
 
 struct SleepV2AlarmDiagnostics: View {
-  @ObservedObject var ble: GooseBLEClient
+  @ObservedObject var ble: WhoofBLEClient
   let palette: SleepV2Palette
 
   var body: some View {

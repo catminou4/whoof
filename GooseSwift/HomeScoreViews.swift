@@ -5,9 +5,9 @@ struct HomeTopScrollFade: View {
     GeometryReader { proxy in
       LinearGradient(
         stops: [
-          .init(color: GooseTheme.appBackground, location: 0),
-          .init(color: GooseTheme.appBackground.opacity(0.96), location: 0.56),
-          .init(color: GooseTheme.appBackground.opacity(0), location: 1),
+          .init(color: WhoofTheme.appBackground, location: 0),
+          .init(color: WhoofTheme.appBackground.opacity(0.96), location: 0.56),
+          .init(color: WhoofTheme.appBackground.opacity(0), location: 1),
         ],
         startPoint: .top,
         endPoint: .bottom

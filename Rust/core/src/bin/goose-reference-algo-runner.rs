@@ -1,6 +1,6 @@
 use std::{fs, path::Path, process::Command};
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     metrics::{AlgorithmRunResult, HrvInput, SleepInput, StrainInput, StressInput},
     reference::{
@@ -60,7 +60,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let family = value(&args, "--family")?.unwrap_or_else(|| "hrv".to_string());
     let provider_arg = value(&args, "--provider")?;
@@ -222,7 +222,7 @@ fn run_reference_algorithm(
     input_path: &std::path::Path,
     external_command: Option<&Path>,
     external_args: &[String],
-) -> goose_core::GooseResult<ReferenceRun> {
+) -> whoof_core::GooseResult<ReferenceRun> {
     if let Some(executable) = external_command {
         return run_external_reference_algorithm(
             family,
@@ -275,8 +275,8 @@ fn run_reference_algorithm(
 fn run_typed<I, O>(
     input_path: &std::path::Path,
     run: impl FnOnce(I) -> AlgorithmRunResult<O>,
-    record: impl FnOnce(&str, &AlgorithmRunResult<O>) -> goose_core::GooseResult<AlgorithmRunRecord>,
-) -> goose_core::GooseResult<ReferenceRun>
+    record: impl FnOnce(&str, &AlgorithmRunResult<O>) -> whoof_core::GooseResult<AlgorithmRunRecord>,
+) -> whoof_core::GooseResult<ReferenceRun>
 where
     I: DeserializeOwned,
     O: Serialize,
@@ -316,7 +316,7 @@ fn run_external_reference_algorithm(
     input_path: &Path,
     executable: &Path,
     external_args: &[String],
-) -> goose_core::GooseResult<ReferenceRun> {
+) -> whoof_core::GooseResult<ReferenceRun> {
     let input_bytes = fs::read(input_path).map_err(|source| GooseError::io(input_path, source))?;
     let input_sha256 = sha256_hex(&input_bytes);
     let mut command = Command::new(executable);
@@ -442,7 +442,7 @@ fn validate_external_reference_output(
     report: &ExternalReferenceOutput,
     family: &str,
     provider: &str,
-) -> goose_core::GooseResult<()> {
+) -> whoof_core::GooseResult<()> {
     if report.schema != EXTERNAL_REFERENCE_OUTPUT_SCHEMA {
         return Err(GooseError::message(format!(
             "unexpected external reference schema {}; expected {EXTERNAL_REFERENCE_OUTPUT_SCHEMA}",
@@ -570,7 +570,7 @@ fn non_empty_object(value: &serde_json::Value) -> bool {
 
 fn external_reference_definition(
     report: &ExternalReferenceOutput,
-) -> goose_core::GooseResult<AlgorithmDefinitionRecord> {
+) -> whoof_core::GooseResult<AlgorithmDefinitionRecord> {
     Ok(AlgorithmDefinitionRecord {
         algorithm_id: report.algorithm_id.clone(),
         version: report.algorithm_version.clone(),
@@ -628,7 +628,7 @@ fn default_provider_for_family(family: &str) -> String {
     }
 }
 
-fn values(args: &[String], name: &str) -> goose_core::GooseResult<Vec<String>> {
+fn values(args: &[String], name: &str) -> whoof_core::GooseResult<Vec<String>> {
     let mut values = Vec::new();
     let mut iter = args.iter();
     while let Some(arg) = iter.next() {
@@ -650,7 +650,7 @@ fn empty_array() -> serde_json::Value {
     json!([])
 }
 
-fn require_non_empty(field: &str, value: &str) -> goose_core::GooseResult<()> {
+fn require_non_empty(field: &str, value: &str) -> whoof_core::GooseResult<()> {
     if value.trim().is_empty() {
         return Err(GooseError::message(format!(
             "external reference {field} must be non-empty"
@@ -659,7 +659,7 @@ fn require_non_empty(field: &str, value: &str) -> goose_core::GooseResult<()> {
     Ok(())
 }
 
-fn require_object(field: &str, value: &serde_json::Value) -> goose_core::GooseResult<()> {
+fn require_object(field: &str, value: &serde_json::Value) -> whoof_core::GooseResult<()> {
     if !value.is_object() {
         return Err(GooseError::message(format!(
             "external reference {field} must be a JSON object"
@@ -668,7 +668,7 @@ fn require_object(field: &str, value: &serde_json::Value) -> goose_core::GooseRe
     Ok(())
 }
 
-fn require_array(field: &str, value: &serde_json::Value) -> goose_core::GooseResult<()> {
+fn require_array(field: &str, value: &serde_json::Value) -> whoof_core::GooseResult<()> {
     if !value.is_array() {
         return Err(GooseError::message(format!(
             "external reference {field} must be a JSON array"
@@ -698,7 +698,7 @@ fn truncate_for_error(value: &str) -> String {
 fn reference_input_path(
     args: &[String],
     family: &str,
-) -> goose_core::GooseResult<std::path::PathBuf> {
+) -> whoof_core::GooseResult<std::path::PathBuf> {
     match family {
         "hrv" => default_path(
             args,

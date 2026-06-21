@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     commands::{
         CommandEmulatorLogEvidenceOptions, command_evidence_from_emulator_log_text,
         validate_commands,

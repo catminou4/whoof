@@ -1,6 +1,6 @@
 use std::fs;
 
-use goose_core::{
+use whoof_core::{
     GooseError,
     capture_correlation::{
         CaptureCorrelationOptions, CaptureCorrelationReport,
@@ -19,7 +19,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let output = path_value(&args, "--output")?;
     let correlation = if let Some(path) = path_value(&args, "--capture-correlation")? {
@@ -58,7 +58,7 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn optional_usize(args: &[String], name: &str) -> goose_core::GooseResult<Option<usize>> {
+fn optional_usize(args: &[String], name: &str) -> whoof_core::GooseResult<Option<usize>> {
     Ok(value(args, name)?
         .map(|raw| {
             raw.parse::<usize>()

@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     capture_import::{CapturedFrameBatchOptions, CapturedFrameInput, import_captured_frame_batch},
     local_health_validation::{
         local_health_validation_manifest_runbook_markdown, review_local_health_validation_manifest,

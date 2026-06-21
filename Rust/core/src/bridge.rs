@@ -2497,12 +2497,12 @@ fn handle_bridge_request_inner(request: BridgeRequest) -> BridgeResponse {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn goose_core_version_json() -> *mut c_char {
+pub extern "C" fn whoof_core_version_json() -> *mut c_char {
     json_to_c_string(core_version_payload())
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn goose_bridge_handle_json(request_json: *const c_char) -> *mut c_char {
+pub unsafe extern "C" fn whoof_bridge_handle_json(request_json: *const c_char) -> *mut c_char {
     if request_json.is_null() {
         return response_to_c_string(&bridge_error(
             "unknown",
@@ -2526,7 +2526,7 @@ pub unsafe extern "C" fn goose_bridge_handle_json(request_json: *const c_char) -
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn goose_bridge_free_string(value: *mut c_char) {
+pub unsafe extern "C" fn whoof_bridge_free_string(value: *mut c_char) {
     if value.is_null() {
         return;
     }

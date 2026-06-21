@@ -1,11 +1,11 @@
 import Foundation
 
-final class GooseMessageStore: ObservableObject {
-  @Published private(set) var messages: [GooseMessage] = []
+final class WhoofMessageStore: ObservableObject {
+  @Published private(set) var messages: [WhoofMessage] = []
 
   private let maximumMessages: Int
   private let flushInterval: TimeInterval
-  private var pendingMessages: [GooseMessage] = []
+  private var pendingMessages: [WhoofMessage] = []
   private var flushWorkItem: DispatchWorkItem?
 
   init(maximumMessages: Int, flushInterval: TimeInterval) {
@@ -13,7 +13,7 @@ final class GooseMessageStore: ObservableObject {
     self.flushInterval = flushInterval
   }
 
-  func enqueue(_ message: GooseMessage) {
+  func enqueue(_ message: WhoofMessage) {
     guard Thread.isMainThread else {
       DispatchQueue.main.async { [weak self] in
         self?.enqueue(message)

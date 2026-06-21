@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     step_counter::{
         ActivityUnavailableDailyStatusOptions, GOOSE_ACTIVITY_UNAVAILABLE_STATUS_V0_ID,
         GOOSE_ACTIVITY_UNAVAILABLE_STATUS_V0_VERSION, GOOSE_STEPS_DEVICE_COUNTER_V0_ID,

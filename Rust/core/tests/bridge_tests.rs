@@ -4,10 +4,10 @@ use std::{
     path::Path,
 };
 
-use goose_core::{
+use whoof_core::{
     bridge::{
-        BRIDGE_RESPONSE_SCHEMA, BridgeResponse, goose_bridge_free_string, goose_bridge_handle_json,
-        goose_core_version_json, handle_bridge_request_json,
+        BRIDGE_RESPONSE_SCHEMA, BridgeResponse, whoof_bridge_free_string, whoof_bridge_handle_json,
+        whoof_core_version_json, handle_bridge_request_json,
     },
     calibration::{
         CalibrationDataset, CalibrationOptions, calibration_run_record, evaluate_linear_calibration,
@@ -1465,7 +1465,7 @@ fn bridge_derives_packet_timeline_from_decoded_rows() {
         })
         .unwrap();
     store
-        .insert_decoded_frame(goose_core::store::DecodedFrameInput {
+        .insert_decoded_frame(whoof_core::store::DecodedFrameInput {
             frame_id: "bridge-frame-1.frame.0",
             evidence_id: "bridge-frame-1",
             parsed: &parsed,
@@ -8369,14 +8369,14 @@ fn bridge_errors_are_structured_for_bad_input() {
 
 #[test]
 fn c_abi_bridge_roundtrips_json_and_allows_freeing_results() {
-    let version_ptr = goose_core_version_json();
+    let version_ptr = whoof_core_version_json();
     assert!(!version_ptr.is_null());
     let version = unsafe { CStr::from_ptr(version_ptr) }
         .to_str()
         .unwrap()
         .to_string();
     assert!(version.contains("bridge_request_schema"));
-    unsafe { goose_bridge_free_string(version_ptr) };
+    unsafe { whoof_bridge_free_string(version_ptr) };
 
     let request = CString::new(
         serde_json::json!({
@@ -8388,14 +8388,14 @@ fn c_abi_bridge_roundtrips_json_and_allows_freeing_results() {
         .to_string(),
     )
     .unwrap();
-    let response_ptr = unsafe { goose_bridge_handle_json(request.as_ptr()) };
+    let response_ptr = unsafe { whoof_bridge_handle_json(request.as_ptr()) };
     assert!(!response_ptr.is_null());
     let response_json = unsafe { CStr::from_ptr(response_ptr) }.to_str().unwrap();
     let response: BridgeResponse = serde_json::from_str(response_json).unwrap();
     assert!(response.ok, "{:?}", response.error);
-    unsafe { goose_bridge_free_string(response_ptr) };
+    unsafe { whoof_bridge_free_string(response_ptr) };
 
-    let null_response_ptr = unsafe { goose_bridge_handle_json(std::ptr::null()) };
+    let null_response_ptr = unsafe { whoof_bridge_handle_json(std::ptr::null()) };
     assert!(!null_response_ptr.is_null());
     let null_response_json = unsafe { CStr::from_ptr(null_response_ptr) }
         .to_str()
@@ -8403,7 +8403,7 @@ fn c_abi_bridge_roundtrips_json_and_allows_freeing_results() {
     let null_response: BridgeResponse = serde_json::from_str(null_response_json).unwrap();
     assert!(!null_response.ok);
     assert_eq!(null_response.error.unwrap().code, "null_request");
-    unsafe { goose_bridge_free_string(null_response_ptr) };
+    unsafe { whoof_bridge_free_string(null_response_ptr) };
 }
 
 fn request(value: serde_json::Value) -> BridgeResponse {

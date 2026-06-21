@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     activity_candidates::{
         ACTIVITY_CANDIDATE_CLASSIFIER_INPUT_SCHEMA, ActivityCandidateClassifierInput,
         ActivityCandidateClassifierOptions, ActivityCommandSyncEvidence,
@@ -585,7 +585,7 @@ fn put_i16(bytes: &mut [u8], offset: usize, value: i16) {
     bytes[offset..offset + 2].copy_from_slice(&value.to_le_bytes());
 }
 
-fn trusted_motion_correlation() -> goose_core::capture_correlation::CaptureCorrelationReport {
+fn trusted_motion_correlation() -> whoof_core::capture_correlation::CaptureCorrelationReport {
     let store = GooseStore::open_in_memory().unwrap();
     let frames = vec![
         CapturedFrameInput {

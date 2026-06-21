@@ -1,16 +1,14 @@
-# Goose - Local Companion for WHOOP 5.0
+# Whoof - Local Companion for WHOOP 4.0 and 5.0
 
 **Alpha proof of concept. This build is for developers to evaluate whether a project of this scope is viable. It is not ready to use as an app for tracking personal health data yet.**
 
-If you don't know what Xcode is, or how to build the Rust core, this build is not for you. Come back on 13 June 2026 for the first public beta on TestFlight.
+Whoof is a fork of [b-nnett/goose](https://github.com/b-nnett/goose) that adds **WHOOP 4.0 (Gen4 / "Harvard")** support on top of the original WHOOP 5.0 project: a Gen4 BLE command-frame builder, generation-aware characteristic routing, the Gen4 historical-sync handshake, and Gen4 historical packet decoding (heart rate, RR intervals, and V12/V24 raw DSP fields). The Gen4 protocol is ported from the [openwhoop](https://github.com/bWanShiTong/openwhoop) reference. It also includes performance work to reduce UI lag.
 
-![Goose app hero showing a connected WHOOP 5.0 device](docs/assets/readme-hero.png)
+If you don't know what Xcode is, or how to build the Rust core, this build is not for you.
 
-This prototype targets WHOOP 5.0 only. Other WHOOP generations are not supported in this build.
+This build connects to WHOOP 4.0 and WHOOP 5.0 bands.
 
-The app and backend have had very little attention put into performance. The app will lag, very considerably. Performance PRs are welcome, or you can wait until I address it in due course.
-
-Goose is a local-first WHOOP 5.0 data and health metrics project. The iOS app connects to WHOOP 5.0 bands, routes packet data through the Goose Rust core, and turns that data into daily health, recovery, sleep, strain, stress, cardio, energy, coach, and debug views.
+Whoof is a local-first WHOOP data and health metrics project. The iOS app connects to WHOOP bands over Bluetooth, routes packet data through the Whoof Rust core (`whoof-core`), and turns that data into daily health, recovery, sleep, strain, stress, cardio, energy, coach, and debug views. The Xcode target and source directory are still named `GooseSwift` from the upstream project; the product, bundle id (`com.madhursatija.whoof`), Rust crate, and Swift types are renamed to Whoof.
 
 ## Project Layout
 

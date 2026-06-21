@@ -59,7 +59,7 @@ struct HeartRateSeriesFile: Codable {
 
 final class HeartRateSeriesStore {
   static let shared = HeartRateSeriesStore()
-  static let didUpdateNotification = Notification.Name("GooseHeartRateSeriesStoreDidUpdate")
+  static let didUpdateNotification = Notification.Name("WhoofHeartRateSeriesStoreDidUpdate")
 
   private static let retention: TimeInterval = 7 * 24 * 60 * 60
   private static let maxSamples = 100_000
@@ -68,7 +68,7 @@ final class HeartRateSeriesStore {
 
   private let url: URL
   private let stateLock = NSLock()
-  private let writeQueue = DispatchQueue(label: "com.goose.swift.heart-rate-series", qos: .utility)
+  private let writeQueue = DispatchQueue(label: "com.whoof.swift.heart-rate-series", qos: .utility)
   private var samples: [HeartRateSamplePoint]
   private var pendingWrite: DispatchWorkItem?
   private var lastNotificationAt = Date.distantPast
@@ -233,7 +233,7 @@ final class HeartRateSeriesStore {
   private static func defaultURL() -> URL {
     let baseDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
       ?? FileManager.default.temporaryDirectory
-    let directory = baseDirectory.appendingPathComponent("GooseSwift", isDirectory: true)
+    let directory = baseDirectory.appendingPathComponent("WhoofSwift", isDirectory: true)
     try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     return directory
       .appendingPathComponent("heart-rate-samples.json")
@@ -293,7 +293,7 @@ final class HeartRateSeriesStore {
       let data = try encoder.encode(payload)
       try data.write(to: url, options: .atomic)
     } catch {
-      NSLog("GooseSwift heart-rate sample persist failed: \(String(describing: error))")
+      NSLog("WhoofSwift heart-rate sample persist failed: \(String(describing: error))")
     }
   }
 
@@ -339,7 +339,7 @@ struct HRVSeriesFile: Codable {
 
 final class HRVSeriesStore {
   static let shared = HRVSeriesStore()
-  static let didUpdateNotification = Notification.Name("GooseHRVSeriesStoreDidUpdate")
+  static let didUpdateNotification = Notification.Name("WhoofHRVSeriesStoreDidUpdate")
 
   private static let retention: TimeInterval = 14 * 24 * 60 * 60
   private static let maxSamples = 20_000
@@ -348,7 +348,7 @@ final class HRVSeriesStore {
 
   private let url: URL
   private let stateLock = NSLock()
-  private let writeQueue = DispatchQueue(label: "com.goose.swift.hrv-series", qos: .utility)
+  private let writeQueue = DispatchQueue(label: "com.whoof.swift.hrv-series", qos: .utility)
   private var samples: [HRVSamplePoint]
   private var pendingWrite: DispatchWorkItem?
   private var lastNotificationAt = Date.distantPast
@@ -436,7 +436,7 @@ final class HRVSeriesStore {
   private static func defaultURL() -> URL {
     let baseDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
       ?? FileManager.default.temporaryDirectory
-    let directory = baseDirectory.appendingPathComponent("GooseSwift", isDirectory: true)
+    let directory = baseDirectory.appendingPathComponent("WhoofSwift", isDirectory: true)
     try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     return directory
       .appendingPathComponent("hrv-samples.json")
@@ -516,7 +516,7 @@ final class HRVSeriesStore {
       let data = try encoder.encode(payload)
       try data.write(to: url, options: .atomic)
     } catch {
-      NSLog("GooseSwift HRV sample persist failed: \(String(describing: error))")
+      NSLog("WhoofSwift HRV sample persist failed: \(String(describing: error))")
     }
   }
 
@@ -533,7 +533,7 @@ final class HRVSeriesStore {
 final class HeartRateSamplePipeline {
   var onHeartRateTimelineSnapshot: ((HeartRateTimelineSnapshot) -> Void)?
 
-  private let queue = DispatchQueue(label: "com.goose.swift.heart-rate-sample-pipeline", qos: .utility)
+  private let queue = DispatchQueue(label: "com.whoof.swift.heart-rate-sample-pipeline", qos: .utility)
   private let heartRateStore: HeartRateSeriesStore
   private let hrvStore: HRVSeriesStore
   private let timelinePublishInterval: TimeInterval

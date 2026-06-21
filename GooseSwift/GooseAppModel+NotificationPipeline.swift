@@ -2,8 +2,8 @@ import Foundation
 import UIKit
 
 
-extension GooseAppModel {
-  func handleNotification(_ event: GooseNotificationEvent) {
+extension WhoofAppModel {
+  func handleNotification(_ event: WhoofNotificationEvent) {
     let (queueDepth, highWatermark) = incrementNotificationIngestQueueDepth()
     let captureImportActive = activeHealthPacketCapture != nil || activeActivityPersistence != nil
     let parseContext = notificationParseContext(for: event)
@@ -161,7 +161,7 @@ extension GooseAppModel {
     }
   }
 
-  func importCapturedFrames(_ frames: [NotificationFrame], event: GooseNotificationEvent) {
+  func importCapturedFrames(_ frames: [NotificationFrame], event: WhoofNotificationEvent) {
     guard activeHealthPacketCapture != nil || activeActivityPersistence != nil else {
       return
     }
@@ -309,7 +309,7 @@ extension GooseAppModel {
     return true
   }
 
-  static func captureEvidenceID(for frame: NotificationFrame, event: GooseNotificationEvent, index: Int) -> String {
+  static func captureEvidenceID(for frame: NotificationFrame, event: WhoofNotificationEvent, index: Int) -> String {
     let milliseconds = Int((event.capturedAt.timeIntervalSince1970 * 1000).rounded())
     let prefix = String(frame.hex.prefix(16))
     return "ios.\(event.deviceID.uuidString).\(milliseconds).\(index).\(prefix)"
@@ -346,7 +346,7 @@ extension GooseAppModel {
     packetImportRevision += 1
   }
 
-  func parseNotificationFrames(_ frames: [NotificationFrame], event: GooseNotificationEvent) {
+  func parseNotificationFrames(_ frames: [NotificationFrame], event: WhoofNotificationEvent) {
     parseNotificationFrames(
       frames,
       event: event,
@@ -356,7 +356,7 @@ extension GooseAppModel {
 
   func parseNotificationFrames(
     _ frames: [NotificationFrame],
-    event: GooseNotificationEvent,
+    event: WhoofNotificationEvent,
     context: NotificationParseContext
   ) {
     let parser = notificationFrameParser
@@ -497,7 +497,7 @@ extension GooseAppModel {
     }
   }
 
-  func notificationParseContext(for event: GooseNotificationEvent) -> NotificationParseContext {
+  func notificationParseContext(for event: WhoofNotificationEvent) -> NotificationParseContext {
     NotificationParseContext(
       deviceType: event.rustDeviceType,
       healthCaptureActive: activeHealthPacketCapture != nil,
@@ -512,7 +512,7 @@ extension GooseAppModel {
 
   static func interpretNotificationFrame(
     _ result: NotificationFrameParseResult,
-    event: GooseNotificationEvent,
+    event: WhoofNotificationEvent,
     healthCaptureActive: Bool,
     fallbackHeartRate: Int?
   ) -> NotificationFrameInterpretation {
@@ -589,7 +589,7 @@ extension GooseAppModel {
 
   static func recordSkippedParsedFrameMainHandling(
     _ result: ParsedNotificationFrameResult,
-    ble: GooseBLEClient,
+    ble: WhoofBLEClient,
     packetUIStateAggregator: PacketUIStateAggregator
   ) {
     let event = result.event
@@ -610,7 +610,7 @@ extension GooseAppModel {
     }
   }
 
-  func handleParsedNotificationFrame(_ interpretation: NotificationFrameInterpretation, event: GooseNotificationEvent) {
+  func handleParsedNotificationFrame(_ interpretation: NotificationFrameInterpretation, event: WhoofNotificationEvent) {
     guard interpretation.parseErrorDescription == nil else {
       ble.record(
         level: .warn,
@@ -657,7 +657,7 @@ extension GooseAppModel {
 
   struct CaptureFrameRowBuildRequest {
     let frames: [NotificationFrame]
-    let event: GooseNotificationEvent
+    let event: WhoofNotificationEvent
     let capturedAt: String
     let captureSessionID: String?
     let deviceModel: String
@@ -681,7 +681,7 @@ extension GooseAppModel {
   }
 
   struct NotificationIngestResult {
-    let event: GooseNotificationEvent
+    let event: WhoofNotificationEvent
     let frames: [NotificationFrame]
     let bufferedBytes: Int
     let expectedBytes: Int?
@@ -689,7 +689,7 @@ extension GooseAppModel {
     let usedBufferedData: Bool
   }
 
-  func notificationIngestResult(for event: GooseNotificationEvent) -> NotificationIngestResult {
+  func notificationIngestResult(for event: WhoofNotificationEvent) -> NotificationIngestResult {
     let reassembly = gooseFrames(in: event.value, event: event)
     return NotificationIngestResult(
       event: event,
@@ -768,7 +768,7 @@ extension GooseAppModel {
     let usedBufferedData: Bool
   }
 
-  func gooseFrames(in data: Data, event: GooseNotificationEvent) -> FrameReassemblyResult {
+  func gooseFrames(in data: Data, event: WhoofNotificationEvent) -> FrameReassemblyResult {
     let key = frameReassemblyKey(for: event)
     let hadBufferedData = frameReassemblyBuffers[key]?.isEmpty == false
     var bytes = Array(frameReassemblyBuffers[key] ?? Data())
@@ -827,7 +827,7 @@ extension GooseAppModel {
     )
   }
 
-  func frameReassemblyKey(for event: GooseNotificationEvent) -> String {
+  func frameReassemblyKey(for event: WhoofNotificationEvent) -> String {
     "\(event.deviceID.uuidString)|\(event.serviceUUID)|\(event.characteristicUUID)|\(event.rustDeviceType)"
   }
 

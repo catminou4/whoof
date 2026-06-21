@@ -1,6 +1,6 @@
 use std::fs;
 
-use goose_core::activity_candidates::{
+use whoof_core::activity_candidates::{
     ACTIVITY_CANDIDATE_CLASSIFIER_INPUT_SCHEMA, ACTIVITY_CANDIDATE_CLASSIFIER_REPORT_SCHEMA,
     ACTIVITY_CANDIDATE_UNKNOWN_ACTIVITY_TYPE, ActivityCandidateClassifierInput,
     ActivityCandidateClassifierOptions, ActivityCandidateClassifierReport, ActivityCandidateState,
@@ -9,10 +9,10 @@ use goose_core::activity_candidates::{
     ActivitySessionPacketDerivedMetricPlanReport, run_activity_candidate_classifier,
     run_packet_derived_activity_metric_planner,
 };
-use goose_core::activity_sessions::{
+use whoof_core::activity_sessions::{
     ACTIVITY_SESSION_CORRECTION_SCOPE, activity_session_correction_plans,
 };
-use goose_core::health_sync::{ActivitySyncCandidate, ActivitySyncMetric, HealthSyncSessionKind};
+use whoof_core::health_sync::{ActivitySyncCandidate, ActivitySyncMetric, HealthSyncSessionKind};
 use serde_json::json;
 
 fn provenance(source: &str, evidence_id: &str) -> ActivityEvidenceProvenance {
@@ -185,11 +185,11 @@ fn assert_packet_derived_plan_report(
     assert!(report.pass, "{:?}", report.issues);
     assert_eq!(
         report.schema,
-        goose_core::activity_candidates::ACTIVITY_SESSION_PACKET_DERIVED_METRIC_PLAN_REPORT_SCHEMA
+        whoof_core::activity_candidates::ACTIVITY_SESSION_PACKET_DERIVED_METRIC_PLAN_REPORT_SCHEMA
     );
     assert_eq!(
         report.generated_by,
-        goose_core::activity_candidates::ACTIVITY_SESSION_PACKET_DERIVED_METRIC_PLAN_GENERATED_BY
+        whoof_core::activity_candidates::ACTIVITY_SESSION_PACKET_DERIVED_METRIC_PLAN_GENERATED_BY
     );
     assert_eq!(report.session_id, expected_session_id);
     assert_eq!(report.activity_type, expected_activity_type);

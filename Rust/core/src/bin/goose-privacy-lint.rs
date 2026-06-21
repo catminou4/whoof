@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     privacy_lint::lint_privacy_path,
     report::write_json_report,
     tool_args::{args, default_path, path_value},
@@ -11,7 +11,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let input = default_path(&args, "--input", ".")?;
     let output = path_value(&args, "--output")?;

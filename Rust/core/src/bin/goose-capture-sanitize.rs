@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     GooseError,
     capture_sanitize::{CaptureSanitizeOptions, sanitize_capture_path},
     report::write_json_report,
@@ -12,7 +12,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let input =
         path_value(&args, "--input")?.ok_or_else(|| GooseError::message("--input is required"))?;

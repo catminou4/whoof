@@ -2,7 +2,7 @@ import CoreBluetooth
 import Foundation
 import OSLog
 
-extension GooseBLEClient: CBCentralManagerDelegate {
+extension WhoofBLEClient: CBCentralManagerDelegate {
   func centralManager(
     _ central: CBCentralManager,
     willRestoreState dict: [String: Any]
@@ -116,7 +116,7 @@ extension GooseBLEClient: CBCentralManagerDelegate {
     let serviceUUIDs = advertisedServices
       .map(\.uuidString)
       .joined(separator: ",")
-    let device = GooseDiscoveredDevice(
+    let device = WhoofDiscoveredDevice(
       id: peripheral.identifier,
       name: name,
       rssi: RSSI.intValue

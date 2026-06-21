@@ -7,7 +7,7 @@ import UIKit
 import HealthKit
 #endif
 
-extension GooseLocalDataExporter {
+extension WhoofLocalDataExporter {
   static func validateSQLiteDatabase(
     path: String,
     included: Bool,
@@ -26,7 +26,7 @@ extension GooseLocalDataExporter {
     }
 
     do {
-      let report = try GooseRustBridge().request(
+      let report = try WhoofRustBridge().request(
         method: "storage.check",
         args: [
           "database_path": path,
@@ -54,7 +54,7 @@ extension GooseLocalDataExporter {
     let baseDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
       ?? FileManager.default.temporaryDirectory
     return baseDirectory
-      .appendingPathComponent("GooseSwift", isDirectory: true)
+      .appendingPathComponent("WhoofSwift", isDirectory: true)
       .appendingPathComponent("goose.sqlite")
       .path
   }
@@ -80,18 +80,18 @@ extension GooseLocalDataExporter {
     fileManager: FileManager
   ) -> [URL] {
     var urls: [URL] = []
-    if pathSet.contains("Application Support/GooseSwift/goose-ble.log"),
+    if pathSet.contains("Application Support/WhoofSwift/goose-ble.log"),
        let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
       urls.append(
         appSupport
-          .appendingPathComponent("GooseSwift", isDirectory: true)
+          .appendingPathComponent("WhoofSwift", isDirectory: true)
           .appendingPathComponent("goose-ble.log")
       )
     }
-    if pathSet.contains("Documents/GooseSwift/goose-ble-live.log") {
+    if pathSet.contains("Documents/WhoofSwift/goose-ble-live.log") {
       urls.append(
         documentsDirectory
-          .appendingPathComponent("GooseSwift", isDirectory: true)
+          .appendingPathComponent("WhoofSwift", isDirectory: true)
           .appendingPathComponent("goose-ble-live.log")
       )
     }
@@ -178,7 +178,7 @@ extension GooseLocalDataExporter {
   }
 
   static func errorSummary(_ error: Error) -> String {
-    if case let GooseRustBridgeError.methodFailed(message) = error {
+    if case let WhoofRustBridgeError.methodFailed(message) = error {
       return message
     }
     return String(describing: error)
@@ -231,9 +231,9 @@ extension GooseLocalDataExporter {
   static func exportRoots(fileManager: FileManager, documentsDirectory: URL) -> [(label: String, url: URL)] {
     var roots: [(String, URL)] = []
     if let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-      roots.append(("Application Support/GooseSwift", appSupport.appendingPathComponent("GooseSwift", isDirectory: true)))
+      roots.append(("Application Support/WhoofSwift", appSupport.appendingPathComponent("WhoofSwift", isDirectory: true)))
     }
-    roots.append(("Documents/GooseSwift", documentsDirectory.appendingPathComponent("GooseSwift", isDirectory: true)))
+    roots.append(("Documents/WhoofSwift", documentsDirectory.appendingPathComponent("WhoofSwift", isDirectory: true)))
     if let library = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first {
       roots.append(("Library/Preferences", library.appendingPathComponent("Preferences", isDirectory: true)))
     }
@@ -303,13 +303,13 @@ extension GooseLocalDataExporter {
     }
 
     switch label {
-    case "Application Support/GooseSwift":
+    case "Application Support/WhoofSwift":
       return relativePath == "goose.sqlite"
         || relativePath == "goose.sqlite-wal"
         || relativePath == "goose.sqlite-shm"
         || relativePath == "goose-ble.log"
         || relativePath.hasPrefix("goose-ble.")
-    case "Documents/GooseSwift":
+    case "Documents/WhoofSwift":
       return relativePath == "goose-ble-live.log"
         || relativePath.hasPrefix("OvernightGuard/\(requiredOvernightSessionID)/")
     case "Library/Preferences":

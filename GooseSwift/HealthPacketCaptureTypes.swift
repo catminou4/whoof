@@ -344,7 +344,7 @@ final class HealthPacketCaptureFamilyAggregator {
   var onSnapshot: ((HealthPacketCaptureFamilySnapshot) -> Void)?
   var onStatus: ((String) -> Void)?
 
-  private let queue = DispatchQueue(label: "com.goose.swift.health-packet-family-aggregator", qos: .utility)
+  private let queue = DispatchQueue(label: "com.whoof.swift.health-packet-family-aggregator", qos: .utility)
   private let stateLock = NSLock()
   private let publishInterval: TimeInterval
   private var rowsByID: [String: HealthPacketCaptureFamily] = [:]

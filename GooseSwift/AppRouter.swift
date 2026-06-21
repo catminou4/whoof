@@ -2,7 +2,7 @@ import Foundation
 
 @MainActor
 final class AppRouter: ObservableObject {
-  @Published var selectedTab: GooseAppTab = .home
+  @Published var selectedTab: WhoofAppTab = .home
   @Published var healthPath: [HealthRoute] = []
   @Published var morePath: [MoreRoute] = []
   @Published var codexAuthCallbackURL: URL?
@@ -42,7 +42,7 @@ final class AppRouter: ObservableObject {
     }
   }
 
-  func reselect(_ tab: GooseAppTab) {
+  func reselect(_ tab: WhoofAppTab) {
     switch tab {
     case .coach:
       coachScrollToBottomRequestID += 1

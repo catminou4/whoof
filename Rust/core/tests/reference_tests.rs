@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     metrics::{HrvInput, SleepInput, StrainInput, StressInput, goose_hrv_v0},
     reference::{
         REFERENCE_HRV_TIME_DOMAIN_ID, REFERENCE_HRV_TIME_DOMAIN_VERSION,

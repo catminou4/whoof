@@ -1,4 +1,4 @@
-use goose_core::{
+use whoof_core::{
     property_tests::{
         DEFAULT_CASES_PER_GROUP, DEFAULT_PROPERTY_SEED, PropertySuiteOptions, run_property_suite,
     },
@@ -13,7 +13,7 @@ fn main() {
     }
 }
 
-fn run() -> goose_core::GooseResult<()> {
+fn run() -> whoof_core::GooseResult<()> {
     let args = args();
     let seed = optional_u64(&args, "--seed")?.unwrap_or(DEFAULT_PROPERTY_SEED);
     let cases_per_group = optional_usize(&args, "--cases")?.unwrap_or(DEFAULT_CASES_PER_GROUP);
@@ -31,21 +31,21 @@ fn run() -> goose_core::GooseResult<()> {
     }
 }
 
-fn optional_u64(args: &[String], name: &str) -> goose_core::GooseResult<Option<u64>> {
+fn optional_u64(args: &[String], name: &str) -> whoof_core::GooseResult<Option<u64>> {
     Ok(value(args, name)?
         .map(|raw| {
             raw.parse::<u64>().map_err(|source| {
-                goose_core::GooseError::message(format!("invalid {name}: {source}"))
+                whoof_core::GooseError::message(format!("invalid {name}: {source}"))
             })
         })
         .transpose()?)
 }
 
-fn optional_usize(args: &[String], name: &str) -> goose_core::GooseResult<Option<usize>> {
+fn optional_usize(args: &[String], name: &str) -> whoof_core::GooseResult<Option<usize>> {
     Ok(value(args, name)?
         .map(|raw| {
             raw.parse::<usize>().map_err(|source| {
-                goose_core::GooseError::message(format!("invalid {name}: {source}"))
+                whoof_core::GooseError::message(format!("invalid {name}: {source}"))
             })
         })
         .transpose()?)

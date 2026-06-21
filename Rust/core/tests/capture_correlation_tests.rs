@@ -1,6 +1,6 @@
 use std::{collections::BTreeSet, fs, path::Path};
 
-use goose_core::{
+use whoof_core::{
     capture_correlation::run_capture_correlation_for_store,
     capture_correlation::{CaptureCorrelationOptions, run_capture_correlation},
     capture_import::{CapturedFrameBatchOptions, CapturedFrameInput, import_captured_frame_batch},
@@ -188,7 +188,7 @@ fn correlation_report_promotes_distinct_owned_history_and_motion_evidence() {
 }
 
 fn owned_sources_for(
-    report: &goose_core::capture_correlation::CaptureCorrelationReport,
+    report: &whoof_core::capture_correlation::CaptureCorrelationReport,
     body_summary_kind: &str,
 ) -> BTreeSet<String> {
     report

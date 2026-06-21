@@ -54,8 +54,8 @@ struct MoreCommandGroup: Identifiable {
 }
 
 struct MoreCaptureView: View {
-  @EnvironmentObject private var model: GooseAppModel
-  @EnvironmentObject private var messageStore: GooseMessageStore
+  @EnvironmentObject private var model: WhoofAppModel
+  @EnvironmentObject private var messageStore: WhoofMessageStore
   @ObservedObject var store: MoreDataStore
 
   var body: some View {
@@ -312,7 +312,7 @@ struct MoreCaptureView: View {
     return model.overnightGuardExportURL == nil ? .pending : .ready
   }
 
-  private func icon(for level: GooseLogLevel) -> String {
+  private func icon(for level: WhoofLogLevel) -> String {
     switch level {
     case .debug: "terminal"
     case .info: "info.circle"
@@ -321,7 +321,7 @@ struct MoreCaptureView: View {
     }
   }
 
-  private func status(for level: GooseLogLevel) -> MoreStatusKind {
+  private func status(for level: WhoofLogLevel) -> MoreStatusKind {
     switch level {
     case .debug, .info: .ready
     case .warn: .stale
@@ -395,7 +395,7 @@ struct MoreHealthSyncView: View {
       Section("Adapter") {
         MoreInfoRow(title: "Health Adapter", value: store.healthAdapterStatus, systemImage: "heart.text.square", status: adapterStatusKind)
         MoreInfoRow(title: "Authorization", value: store.healthAuthorizationStatus, systemImage: "lock.shield", status: .ready)
-        MoreInfoRow(title: "Existing Goose Records", value: store.existingGooseRecordsStatus, systemImage: "externaldrive", status: .pending)
+        MoreInfoRow(title: "Existing Whoof Records", value: store.existingWhoofRecordsStatus, systemImage: "externaldrive", status: .pending)
         MoreInfoRow(title: "Imported Sleep History", value: store.importedSleepHistoryStatus, systemImage: "bed.double", status: .pending)
         Button {
           store.refreshHealthAdapter()

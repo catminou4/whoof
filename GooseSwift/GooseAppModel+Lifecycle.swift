@@ -6,6 +6,9 @@ extension WhoofAppModel {
   func handleAppLifecycleChange(_ phase: String) {
     let power = Self.currentOvernightPowerState()
     ble.record(source: "app.lifecycle", title: "scene_phase", body: "\(phase) | \(power.summary)")
+    if phase == "active" || phase == "foreground" {
+      maybeAutoSyncHistory(reason: "scene_phase_\(phase)")
+    }
     guard overnightGuardActive else {
       return
     }
@@ -34,6 +37,27 @@ extension WhoofAppModel {
       resumeOvernightGuardStreamsIfReady(reason: "scene_phase_\(phase)")
     }
     writeOvernightGuardStatus(reason: "scene_phase_\(phase)")
+  }
+
+  /// Pull band history automatically when the app comes to the foreground with a
+  /// connected band, throttled to a few hours. Reuses the same path as the manual
+  /// Sync button so overnight HR + IMU land in the store (and sleep/steps/recovery
+  /// populate) without the user having to tap Sync every morning.
+  func maybeAutoSyncHistory(reason: String) {
+    let state = ble.connectionState.lowercased()
+    guard state == "ready" || state == "connected" else {
+      return
+    }
+    guard !ble.isHistoricalSyncing else {
+      return
+    }
+    let now = Date()
+    guard now.timeIntervalSince(lastAutoHistorySyncAt) >= Self.autoHistorySyncMinInterval else {
+      return
+    }
+    lastAutoHistorySyncAt = now
+    ble.record(source: "app.lifecycle", title: "auto_history_sync", body: reason)
+    ble.syncHistoricalPackets()
   }
 
   func completeOnboarding() {
